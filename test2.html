@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bare · netlify credit calculator – aligned markers & logical caps</title>
+    <!-- barebone styles: structure, bar colors, and aligned threshold labels -->
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            max-width: 700px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background: #f9f9fb;
+            color: #141617;
+        }
+        .card {
+            background: white;
+            border: 1px solid #d9d9de;
+            border-radius: 16px;
+            padding: 1.75rem 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+        h2 { font-size: 1.6rem; font-weight: 500; margin: 0 0 0.5rem 0; }
+        .note { color: #5e5e6b; font-size: 0.95rem; margin-bottom: 2rem; }
+
+        /* input rows */
+        .meter-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.6rem 1rem;
+            margin-bottom: 1.2rem;
+        }
+        .meter-label {
+            min-width: 130px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #2c2c33;
+        }
+        .meter-label small {
+            font-weight: normal;
+            color: #6b6b78;
+            font-size: 0.8rem;
+            margin-left: 4px;
+        }
+        input[type=range] {
+            flex: 2 1 200px;
+            min-width: 180px;
+            height: 6px;
+            background: #e1e1e6;
+            border-radius: 20px;
+            accent-color: #2e3f99;
+        }
+        input[type=number] {
+            width: 90px;
+            padding: 8px 8px;
+            border: 1px solid #cbcbd1;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            text-align: right;
+            background: white;
+        }
+        .credit-hint {
+            font-size: 0.85rem;
+            color: #4a4a55;
+            min-width: 55px;
+            text-align: right;
+        }
+        hr { margin: 1.8rem 0 1.5rem; border: none; border-top: 2px solid #efeff2; }
+
+        /* total + threshold bar */
+        .total-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-size: 1.4rem;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+        }
+        #totalCredits {
+            font-weight: 600;
+            color: #0b1b4b;
+        }
+
+        /* bar container: relative for absolute markers and labels */
+        .threshold-bar-bg {
+            position: relative;
+            width: 100%;
+            height: 28px;
+            background: #e6e6ec;
+            border-radius: 40px;
+            margin: 1rem 0 0;
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.05);
+            overflow: hidden;        /* keeps lines inside rounded corners */
+        }
+
+        #fillBar {
+            height: 100%;
+            width: 0%;
+            background: #2e7d32;     /* will be updated by js */
+            transition: width 0.2s ease, background 0.2s ease;
+            border-radius: 40px;
+        }
+
+        /* vertical threshold markers (dark lines) */
+        .threshold-marker {
+            position: absolute;
+            top: 0;
+            width: 2px;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6); /* slightly darker for visibility */
+            transform: translateX(-50%);
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* small numeric labels on the bar (optional but helpful) */
+        .marker-label {
+            position: absolute;
+            top: -18px;
+            transform: translateX(-50%);
+            font-size: 0.65rem;
+            background: rgba(255,255,255,0.8);
+            padding: 0px 4px;
+            border-radius: 10px;
+            color: #1e1e2a;
+            font-weight: 500;
+            white-space: nowrap;
+            z-index: 6;
+            pointer-events: none;
+        }
+
+        /* ---- NEW: absolutely positioned text markers below the bar ---- */
+        .threshold-labels-container {
+            position: relative;
+            width: 100%;
+            height: 24px;
+            margin: 4px 0 8px 0;
+        }
+        .threshold-label {
+            position: absolute;
+            font-size: 0.8rem;
+            color: #2c2c33;
+            font-weight: 450;
+            white-space: nowrap;
+            transform: translateX(-50%); /* center the text on the threshold */
+        }
+        .threshold-label.last {
+            transform: translateX(-100%); /* align right edge with bar end for 3k */
+        }
+
+        .plan-tag {
+            display: inline-block;
+            background: #f1f0f5;
+            padding: 0.25rem 0.9rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 450;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h2>⚡ netlify credit calculator · aligned thresholds & logical caps</h2>
+    <div class="note">defaults reflect a low‑usage personal project · <strong>free plan: 300 credits</strong><br>
+    <span style="background:#e8e8ef; padding:2px 8px; border-radius:30px;">▼ max values now based on 3,000 Pro credits – sliders go up to full Pro allotment</span>
+    </div>
+
+    <!-- metered features – max values updated to logical caps (based on 3000 credits) -->
+    <div class="meter-row">
+        <span class="meter-label">AI inference <small>(USD)</small></span>
+        <input type="range" id="aiRange" min="0" max="20" step="0.01" value="0.2">
+        <input type="number" id="aiNumber" min="0" max="20" step="0.01" value="0.20">
+        <span class="credit-hint" id="aiCredits">0</span>
+    </div>
+    <div class="meter-row">
+        <span class="meter-label">Compute <small>(GB‑h)</small></span>
+        <input type="range" id="computeRange" min="0" max="600" step="0.5" value="2.0">
+        <input type="number" id="computeNumber" min="0" max="600" step="0.5" value="2.0">
+        <span class="credit-hint" id="computeCredits">0</span>
+    </div>
+    <div class="meter-row">
+        <span class="meter-label">Web requests <small>(10k)</small></span>
+        <input type="range" id="reqRange" min="0" max="1000" step="1" value="8">
+        <input type="number" id="reqNumber" min="0" max="1000" step="1" value="8">
+        <span class="credit-hint" id="reqCredits">0</span>
+    </div>
+    <div class="meter-row">
+        <span class="meter-label">Bandwidth <small>(GB)</small></span>
+        <input type="range" id="bwRange" min="0" max="300" step="0.5" value="1.5">
+        <input type="number" id="bwNumber" min="0" max="300" step="0.5" value="1.5">
+        <span class="credit-hint" id="bwCredits">0</span>
+    </div>
+    <div class="meter-row">
+        <span class="meter-label">Form submissions</span>
+        <input type="range" id="formRange" min="0" max="3000" step="1" value="10">
+        <input type="number" id="formNumber" min="0" max="3000" step="1" value="10">
+        <span class="credit-hint" id="formCredits">0</span>
+    </div>
+    <div class="meter-row">
+        <span class="meter-label">Production deploys</span>
+        <input type="range" id="deployRange" min="0" max="200" step="1" value="2">
+        <input type="number" id="deployNumber" min="0" max="200" step="1" value="2">
+        <span class="credit-hint" id="deployCredits">0</span>
+    </div>
+
+    <hr>
+
+    <!-- total + threshold bar with markers -->
+    <div class="total-line">
+        <span>total credits used</span>
+        <span id="totalCredits">0</span>
+    </div>
+
+    <!-- bar container: background + fill + vertical lines + tiny numeric hints -->
+    <div class="threshold-bar-bg" id="barContainer">
+        <div id="fillBar" style="width: 0%; background: #2e7d32;"></div>
+
+        <!-- vertical marker lines at 10%, 33.333%, 100% (300, 1000, 3000) -->
+        <div class="threshold-marker" style="left: 10%;"></div>
+        <div class="threshold-marker" style="left: 33.333%;"></div>
+        <div class="threshold-marker" style="left: 100%;"></div>
+
+        <!-- tiny numeric hints on the bar (optional) -->
+        <span class="marker-label" style="left: 10%;">300</span>
+        <span class="marker-label" style="left: 33.333%;">1k</span>
+        <span class="marker-label" style="left: 100%;">3k</span>
+    </div>
+
+    <!-- ABSOLUTELY POSITIONED TEXT MARKERS – perfectly aligned with thresholds -->
+    <div class="threshold-labels-container">
+        <span class="threshold-label" style="left: 10%;">free · 300</span>
+        <span class="threshold-label" style="left: 33.333%;">personal · 1k</span>
+        <span class="threshold-label last" style="left: 100%;">pro · 3k</span>
+    </div>
+
+    <div id="planHint" class="plan-tag">⚡ currently within free tier</div>
+    <p style="font-size:0.85rem; color:#7a7a88; margin-top:1.2rem;">bar color: green (free) → orange (personal) → red (pro) → dark red (exceeds pro).</p>
+</div>
+
+<script>
+    (function() {
+        // ----- conversion rates (straight from netlify docs) -----
+        const CREDITS_PER_AI_DOLLAR = 180;      // 180 credits per $1 USD
+        const CREDITS_PER_GBH = 5;              // compute
+        const CREDITS_PER_10K_REQUESTS = 3;      // web requests
+        const CREDITS_PER_GB_BW = 10;            // bandwidth
+        const CREDITS_PER_FORM = 1;               // per submission
+        const CREDITS_PER_DEPLOY = 15;            // production deploy
+
+        // ----- DOM elements -----
+        const aiRange = document.getElementById('aiRange');
+        const aiNumber = document.getElementById('aiNumber');
+        const aiCredSpan = document.getElementById('aiCredits');
+
+        const computeRange = document.getElementById('computeRange');
+        const computeNumber = document.getElementById('computeNumber');
+        const computeCredSpan = document.getElementById('computeCredits');
+
+        const reqRange = document.getElementById('reqRange');
+        const reqNumber = document.getElementById('reqNumber');
+        const reqCredSpan = document.getElementById('reqCredits');
+
+        const bwRange = document.getElementById('bwRange');
+        const bwNumber = document.getElementById('bwNumber');
+        const bwCredSpan = document.getElementById('bwCredits');
+
+        const formRange = document.getElementById('formRange');
+        const formNumber = document.getElementById('formNumber');
+        const formCredSpan = document.getElementById('formCredits');
+
+        const deployRange = document.getElementById('deployRange');
+        const deployNumber = document.getElementById('deployNumber');
+        const deployCredSpan = document.getElementById('deployCredits');
+
+        const totalSpan = document.getElementById('totalCredits');
+        const fillBar = document.getElementById('fillBar');
+        const planHint = document.getElementById('planHint');
+
+        function syncInputs(rangeEl, numberEl, value) {
+            if (rangeEl && numberEl) {
+                rangeEl.value = value;
+                numberEl.value = value;
+            }
+        }
+
+        function updateAll() {
+            // read current values
+            const aiVal = parseFloat(aiNumber.value) || 0;
+            const computeVal = parseFloat(computeNumber.value) || 0;
+            const reqVal = parseFloat(reqNumber.value) || 0;
+            const bwVal = parseFloat(bwNumber.value) || 0;
+            const formVal = parseFloat(formNumber.value) || 0;
+            const deployVal = parseFloat(deployNumber.value) || 0;
+
+            // calculate credits
+            const aiCredits = aiVal * CREDITS_PER_AI_DOLLAR;
+            const computeCredits = computeVal * CREDITS_PER_GBH;
+            const reqCredits = reqVal * CREDITS_PER_10K_REQUESTS;
+            const bwCredits = bwVal * CREDITS_PER_GB_BW;
+            const formCredits = formVal * CREDITS_PER_FORM;
+            const deployCredits = deployVal * CREDITS_PER_DEPLOY;
+
+            // update hints
+            aiCredSpan.textContent = Math.round(aiCredits * 10) / 10 + ' cr';
+            computeCredSpan.textContent = Math.round(computeCredits * 10) / 10 + ' cr';
+            reqCredSpan.textContent = Math.round(reqCredits * 10) / 10 + ' cr';
+            bwCredSpan.textContent = Math.round(bwCredits * 10) / 10 + ' cr';
+            formCredSpan.textContent = Math.round(formCredits * 10) / 10 + ' cr';
+            deployCredSpan.textContent = Math.round(deployCredits * 10) / 10 + ' cr';
+
+            // total credits
+            const total = aiCredits + computeCredits + reqCredits + bwCredits + formCredits + deployCredits;
+            totalSpan.textContent = total.toFixed(1);
+
+            // fill bar width (relative to 3000 credits)
+            const maxVisual = 3000;
+            let percent = (total / maxVisual) * 100;
+            percent = Math.min(percent, 100);
+            fillBar.style.width = percent + '%';
+
+            // bar color based on thresholds
+            if (total <= 300) {
+                fillBar.style.background = '#2e7d32'; // green – free
+            } else if (total <= 1000) {
+                fillBar.style.background = '#f5a623'; // orange – personal
+            } else if (total <= 3000) {
+                fillBar.style.background = '#d0021b'; // red – pro
+            } else {
+                fillBar.style.background = '#8b0000'; // dark red – overage
+            }
+
+            // plan hint
+            if (total <= 300) {
+                planHint.innerHTML = '⚡ free plan · 300 credits included · no overage';
+            } else if (total <= 1000) {
+                planHint.innerHTML = '▸ personal plan (1k credits) · $9/month · auto‑recharge available';
+            } else if (total <= 3000) {
+                planHint.innerHTML = '▸ pro plan (3k credits) · $20/team member · 1500 extra credits for $10';
+            } else {
+                planHint.innerHTML = '▸ exceeds pro allotment · extra credits: 1500 for $10 (auto recharge)';
+            }
+
+            // sync sliders
+            syncInputs(aiRange, aiNumber, aiVal);
+            syncInputs(computeRange, computeNumber, computeVal);
+            syncInputs(reqRange, reqNumber, reqVal);
+            syncInputs(bwRange, bwNumber, bwVal);
+            syncInputs(formRange, formNumber, formVal);
+            syncInputs(deployRange, deployNumber, deployVal);
+        }
+
+        function bindPair(rangeEl, numberEl) {
+            if (!rangeEl || !numberEl) return;
+            rangeEl.addEventListener('input', function() {
+                numberEl.value = rangeEl.value;
+                updateAll();
+            });
+            numberEl.addEventListener('input', function() {
+                let val = parseFloat(numberEl.value);
+                const min = parseFloat(numberEl.min);
+                const max = parseFloat(numberEl.max);
+                if (isNaN(val)) val = min;
+                if (val < min) val = min;
+                if (val > max) val = max;
+                numberEl.value = val;
+                rangeEl.value = val;
+                updateAll();
+            });
+        }
+
+        bindPair(aiRange, aiNumber);
+        bindPair(computeRange, computeNumber);
+        bindPair(reqRange, reqNumber);
+        bindPair(bwRange, bwNumber);
+        bindPair(formRange, formNumber);
+        bindPair(deployRange, deployNumber);
+
+        // blur clamping
+        [aiNumber, computeNumber, reqNumber, bwNumber, formNumber, deployNumber].forEach(inp => {
+            inp.addEventListener('blur', function() {
+                let val = parseFloat(this.value);
+                const min = parseFloat(this.min);
+                const max = parseFloat(this.max);
+                if (isNaN(val)) val = min;
+                if (val < min) val = min;
+                if (val > max) val = max;
+                this.value = val;
+
+                if (this === aiNumber) aiRange.value = val;
+                else if (this === computeNumber) computeRange.value = val;
+                else if (this === reqNumber) reqRange.value = val;
+                else if (this === bwNumber) bwRange.value = val;
+                else if (this === formNumber) formRange.value = val;
+                else if (this === deployNumber) deployRange.value = val;
+                updateAll();
+            });
+        });
+
+        updateAll();
+    })();
+</script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+{
+  "conversionRates": {
+    "ai": {
+      "creditsPerUnit": 180,
+      "unit": "USD",
+      "description": "AI inference spend"
+    },
+    "compute": {
+      "creditsPerUnit": 5,
+      "unit": "GB-hour",
+      "description": "Compute usage"
+    },
+    "requests": {
+      "creditsPerUnit": 3,
+      "unit": "10,000 requests",
+      "description": "Web requests"
+    },
+    "bandwidth": {
+      "creditsPerUnit": 10,
+      "unit": "GB",
+      "description": "Bandwidth usage"
+    },
+    "forms": {
+      "creditsPerUnit": 1,
+      "unit": "submission",
+      "description": "Form submissions"
+    },
+    "deploys": {
+      "creditsPerUnit": 15,
+      "unit": "deploy",
+      "description": "Production deploys"
+    }
+  },
+  "pricingTiers": [
+    {
+      "name": "Free",
+      "creditMax": 300,
+      "monthlyCost": 0,
+      "description": "300 credits included"
+    },
+    {
+      "name": "Personal",
+      "creditMax": 1000,
+      "monthlyCost": 9,
+      "description": "1,000 credits/month"
+    },
+    {
+      "name": "Pro",
+      "creditMax": 3000,
+      "monthlyCost": 20,
+      "description": "3,000 credits/month"
+    }
+  ],
+  "overageCost": {
+    "basePlanCost": 20,
+    "creditsPerPack": 1500,
+    "costPerPack": 10,
+    "description": "Additional packs beyond Pro tier"
+  }
+}
