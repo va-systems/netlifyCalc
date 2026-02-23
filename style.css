@@ -18,6 +18,10 @@
     box-sizing: border-box;
 }
 
+html {
+    overflow-x: hidden;
+}
+
 body {
     font-family: var(--font-body);
     max-width: 700px;
@@ -26,6 +30,7 @@ body {
     background: var(--color-bg);
     color: var(--color-text);
     line-height: 1.6;
+    overflow-x: hidden;
 }
 
 /* ===== CARD ===== */
