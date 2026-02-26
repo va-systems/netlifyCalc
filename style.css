@@ -25,12 +25,13 @@ html {
 body {
     font-family: var(--font-body);
     max-width: 700px;
-    margin: 1.5rem auto;
+    margin: 1.5rem auto 1.5rem auto;
     padding: 1rem;
     background: var(--color-bg);
     color: var(--color-text);
     line-height: 1.6;
     overflow-x: hidden;
+    padding-top: 110px;
 }
 
 /* ===== CARD ===== */
@@ -197,6 +198,17 @@ h2 {
 /* Mobile tooltip adjustment */
 .meter-row .tooltip-content {
     font-size: 0.85rem;
+}
+
+/* Mobile: badges hidden on small screens, displayed on desktop */
+.provider-badges {
+    display: none;
+}
+
+@media (min-width: 576px) {
+    .provider-badges {
+        display: flex;
+    }
 }
 
 input[type=range] {
@@ -412,6 +424,159 @@ input[type=number]:focus {
     margin-top: 0.75rem;
 }
 
+/* ===== PROVIDER BADGES ===== */
+.provider-badges {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.badge-initials {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: 700;
+    cursor: default;
+    color: #fff;
+}
+
+.badge-initials.netlify {
+    background: #00c7b7;
+}
+
+.badge-initials.vercel {
+    background: #000;
+}
+
+.badge-initials.render {
+    background: #46e3b7;
+    color: #1a1a1a;
+}
+
+.badge-initials.inactive {
+    background: #e0e0ea;
+    color: #aaa;
+}
+
+/* ===== SECTION LABELS ===== */
+.section-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 16px 0 8px 0;
+}
+
+/* ===== PROVIDER COVERAGE MATRIX ===== */
+.provider-coverage-matrix {
+    margin: 16px 0;
+}
+
+.provider-coverage-matrix summary {
+    cursor: pointer;
+    color: var(--color-accent);
+    font-size: 0.85rem;
+    font-weight: 500;
+    user-select: none;
+}
+
+.provider-coverage-matrix summary:hover {
+    text-decoration: underline;
+}
+
+.provider-coverage-matrix table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    margin-top: 8px;
+}
+
+.provider-coverage-matrix th,
+.provider-coverage-matrix td {
+    padding: 6px 8px;
+    border: 1px solid var(--color-border);
+    text-align: center;
+}
+
+.provider-coverage-matrix td:first-child {
+    text-align: left;
+}
+
+.provider-coverage-matrix th {
+    background: var(--color-bg);
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+/* ===== PROVIDER RESULTS GRID - Frozen Header ===== */
+.provider-results {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: var(--color-bg);
+    padding: 12px 1rem;
+    border-bottom: 1px solid var(--color-border);
+    max-width: 700px;
+    margin: 0 auto;
+    width: calc(100% - 2rem);
+}
+
+.provider-col {
+    background: var(--color-bg);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+    border: 1px solid var(--color-border);
+}
+
+.provider-col-header {
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.col-cost {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    margin-top: 6px;
+}
+
+.col-plan,
+.col-credits {
+    font-size: 0.8rem;
+    color: var(--color-muted);
+    margin-top: 4px;
+}
+
+/* Mobile: provider results stack */
+@media (max-width: 575px) {
+    body {
+        padding-top: 130px;
+    }
+
+    .provider-results {
+        grid-template-columns: 1fr;
+        padding: 12px 0.5rem;
+        width: calc(100% - 1rem);
+    }
+}
+
 /* ===== FOOTER ===== */
 .calc-footer {
     font-size: 0.75rem;
@@ -437,6 +602,7 @@ input[type=number]:focus {
     body {
         margin: 2rem auto;
         padding: 1rem;
+        padding-top: 120px;
     }
 
     .card {
@@ -457,10 +623,15 @@ input[type=number]:focus {
         gap: 0.75rem;
     }
 
-    /* Desktop: 4-column grid layout */
+    .provider-results {
+        padding: 12px 2rem;
+        width: calc(100% - 4rem);
+    }
+
+    /* Desktop: 5-column grid layout */
     .meter-row {
         display: grid;
-        grid-template-columns: 155px 1fr 80px 70px;
+        grid-template-columns: 155px 1fr 80px 70px 90px;
         gap: 1rem;
         align-items: center;
         margin-bottom: 1.5rem;
@@ -483,6 +654,11 @@ input[type=number]:focus {
     .credit-hint {
         grid-column: 4;
         text-align: right;
+    }
+
+    .provider-badges {
+        grid-column: 5;
+        justify-self: center;
     }
 
     .seg-bar-wrap {

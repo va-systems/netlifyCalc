@@ -14,6 +14,7 @@ A clean, interactive web calculator for estimating monthly Netlify billing costs
 - **Informative Tooltips**: Hover over feature labels to understand what each parameter measures
 - **Responsive Design**: Works seamlessly on desktop and mobile devices
 - **Configuration-Driven**: Easily modify pricing without touching code
+- **Provider Coverage Indicators**: Visual badges showing which service providers (Netlify, Vercel, Render) each metric affects
 - **No External Dependencies**: Pure HTML, CSS, and JavaScript
 
 ## Getting Started
@@ -231,6 +232,16 @@ Tested on:
 - Sufficient color contrast ratios
 - Keyboard-navigable range sliders
 - Tooltips with `cursor: help` for discoverability
+
+## Brand Assets & Attribution
+
+Provider logos and icons (SVG/favicons) are sourced from public domain repositories:
+
+- **Netlify**: [Brandfetch](https://brandfetch.com/netlify.com)
+- **Vercel**: [Official Geist Design System](https://vercel.com/geist/brands)
+- **Render**: [Brandfetch](https://brandfetch.com/render.com)
+
+Detailed attributions will be added to the website footer upon implementation. These assets are used under their respective brand guidelines for informational and educational purposes.
 
 ## Notes
 

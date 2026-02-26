@@ -1,5 +1,10 @@
 // ----- conversion rates loaded from config.json -----
 let CONFIG = null;
+let CONFIG_NETLIFY = null;
+let CONFIG_VERCEL = null;
+let CONFIG_RENDER = null;
+
+// Netlify rates
 let CREDITS_PER_AI_DOLLAR = 180;
 let CREDITS_PER_GBH = 5;
 let CREDITS_PER_10K_REQUESTS = 3;
@@ -11,7 +16,7 @@ let OVERAGE_CONFIG = {};
 
 // ----- storage constants -----
 const STORAGE_KEY = 'netlify_calc_state';
-const URL_PARAM_NAMES = ['ai', 'compute', 'req', 'bw', 'form', 'deploy'];
+const URL_PARAM_NAMES = ['ai', 'compute', 'req', 'bw', 'form', 'deploy', 'fnInvoc', 'isr', 'imgOpt', 'storage', 'privLink'];
 
 // ----- load configuration from config.json -----
 async function loadConfig() {
@@ -20,15 +25,20 @@ async function loadConfig() {
         if (!response.ok) throw new Error('Failed to load config');
         CONFIG = await response.json();
 
-        // Update conversion rates from config
-        CREDITS_PER_AI_DOLLAR = CONFIG.conversionRates.ai.creditsPerUnit;
-        CREDITS_PER_GBH = CONFIG.conversionRates.compute.creditsPerUnit;
-        CREDITS_PER_10K_REQUESTS = CONFIG.conversionRates.requests.creditsPerUnit;
-        CREDITS_PER_GB_BW = CONFIG.conversionRates.bandwidth.creditsPerUnit;
-        CREDITS_PER_FORM = CONFIG.conversionRates.forms.creditsPerUnit;
-        CREDITS_PER_DEPLOY = CONFIG.conversionRates.deploys.creditsPerUnit;
-        PRICING_TIERS = CONFIG.pricingTiers;
-        OVERAGE_CONFIG = CONFIG.overageCost;
+        // Extract provider configs
+        CONFIG_NETLIFY = CONFIG.netlify;
+        CONFIG_VERCEL = CONFIG.vercel;
+        CONFIG_RENDER = CONFIG.render;
+
+        // Update Netlify conversion rates from config
+        CREDITS_PER_AI_DOLLAR = CONFIG_NETLIFY.conversionRates.ai.creditsPerUnit;
+        CREDITS_PER_GBH = CONFIG_NETLIFY.conversionRates.compute.creditsPerUnit;
+        CREDITS_PER_10K_REQUESTS = CONFIG_NETLIFY.conversionRates.requests.creditsPerUnit;
+        CREDITS_PER_GB_BW = CONFIG_NETLIFY.conversionRates.bandwidth.creditsPerUnit;
+        CREDITS_PER_FORM = CONFIG_NETLIFY.conversionRates.forms.creditsPerUnit;
+        CREDITS_PER_DEPLOY = CONFIG_NETLIFY.conversionRates.deploys.creditsPerUnit;
+        PRICING_TIERS = CONFIG_NETLIFY.pricingTiers;
+        OVERAGE_CONFIG = CONFIG_NETLIFY.overageCost;
     } catch (e) {
         console.error('Error loading config.json:', e);
         // Fallback to defaults already set above
@@ -96,6 +106,35 @@ const fillBar = document.getElementById('fillBar');
 const planHint = document.getElementById('planHint');
 const costSpan = document.getElementById('estimatedCost');
 
+// ----- New provider-specific input elements -----
+const fnInvocRange = document.getElementById('fnInvocRange');
+const fnInvocNumber = document.getElementById('fnInvocNumber');
+
+const isrRange = document.getElementById('isrRange');
+const isrNumber = document.getElementById('isrNumber');
+
+const imgOptRange = document.getElementById('imgOptRange');
+const imgOptNumber = document.getElementById('imgOptNumber');
+
+const storageRange = document.getElementById('storageRange');
+const storageNumber = document.getElementById('storageNumber');
+
+const privLinkRange = document.getElementById('privLinkRange');
+const privLinkNumber = document.getElementById('privLinkNumber');
+
+// ----- New provider results elements -----
+const netlifyCreditsSpan = document.getElementById('netlifyCredits');
+const netlifyPlanSpan = document.getElementById('netlifyPlan');
+const netlifyMonthlyCostSpan = document.getElementById('netlifyMonthly');
+
+const vercelCreditsSpan = document.getElementById('vercelCredits');
+const vercelPlanSpan = document.getElementById('vercelPlan');
+const vercelMonthlyCostSpan = document.getElementById('vercelMonthly');
+
+const renderCreditsSpan = document.getElementById('renderCredits');
+const renderPlanSpan = document.getElementById('renderPlan');
+const renderMonthlyCostSpan = document.getElementById('renderMonthly');
+
 // ----- URL and Storage Functions -----
 function saveToURL(values) {
     const params = new URLSearchParams();
@@ -105,6 +144,11 @@ function saveToURL(values) {
     params.set('bw', values.bw.toFixed(1));
     params.set('form', values.form.toFixed(0));
     params.set('deploy', values.deploy.toFixed(0));
+    params.set('fnInvoc', values.fnInvoc.toFixed(1));
+    params.set('isr', values.isr.toFixed(0));
+    params.set('imgOpt', values.imgOpt.toFixed(0));
+    params.set('storage', values.storage.toFixed(1));
+    params.set('privLink', values.privLink.toFixed(1));
     window.history.replaceState(null, '', '?' + params.toString());
 }
 
@@ -117,7 +161,12 @@ function loadFromURL() {
             req: parseFloat(params.get('req')) || 0,
             bw: parseFloat(params.get('bw')) || 0,
             form: parseFloat(params.get('form')) || 0,
-            deploy: parseFloat(params.get('deploy')) || 0
+            deploy: parseFloat(params.get('deploy')) || 0,
+            fnInvoc: parseFloat(params.get('fnInvoc')) || 0,
+            isr: parseFloat(params.get('isr')) || 0,
+            imgOpt: parseFloat(params.get('imgOpt')) || 0,
+            storage: parseFloat(params.get('storage')) || 0,
+            privLink: parseFloat(params.get('privLink')) || 0
         };
     }
     return null;
@@ -149,6 +198,104 @@ function loadPreset(presetKey) {
     formNumber.value = preset.form;
     deployNumber.value = preset.deploy;
     updateAll();
+}
+
+function calculateVercelCost(inputs) {
+    const { bandwidth, compute, req, ai, fnInvoc, isr, imgOpt, storage } = inputs;
+    const plans = CONFIG_VERCEL.plans;
+    const rates = CONFIG_VERCEL.overageRates;
+
+    let cost = 0;
+    let plan = 'Hobby';
+
+    // Determine plan based on usage - start with hobby
+    const proRequired = bandwidth > 1024 || compute > 40 || req > 10;
+    if (proRequired) {
+        plan = 'Pro';
+        cost = plans.pro.monthlyCost;
+    } else {
+        plan = 'Hobby';
+        cost = plans.hobby.monthlyCost;
+    }
+
+    // Calculate overage costs beyond plan limits
+    const planLimits = proRequired ? plans.pro : plans.hobby;
+
+    // Bandwidth overage
+    if (bandwidth > planLimits.includedBandwidthGB) {
+        const overageBw = bandwidth - planLimits.includedBandwidthGB;
+        cost += overageBw * rates.bandwidth.costPerGB;
+    }
+
+    // Edge requests overage (in millions)
+    const reqMillion = req / 1000000;
+    if (reqMillion > planLimits.includedEdgeRequestsMillion) {
+        const overageReq = reqMillion - planLimits.includedEdgeRequestsMillion;
+        cost += overageReq * rates.edgeRequests.costPerMillion;
+    }
+
+    // Function invocations overage
+    if (fnInvoc > 0) {
+        cost += fnInvoc * rates.functionInvocations.costPerMillion;
+    }
+
+    // ISR operations overage (10k blocks)
+    if (isr > 0) {
+        cost += (isr / 10000) * rates.isrOperations.costPer10k;
+    }
+
+    // Image optimization
+    if (imgOpt > 0) {
+        cost += (imgOpt / 1000) * rates.imageOptimization.costPer1000;
+    }
+
+    // Storage
+    if (storage > 0) {
+        cost += storage * rates.storage.costPerGBMonth;
+    }
+
+    return {
+        plan: plan,
+        monthlyCost: Math.round(cost * 100) / 100,
+        breakdown: `Usage: ${bandwidth.toFixed(1)}GB BW, ${compute.toFixed(1)}GB-h compute`
+    };
+}
+
+function calculateRenderCost(inputs) {
+    const { bandwidth, compute, privLink } = inputs;
+    const plans = CONFIG_RENDER.plans;
+    const rates = CONFIG_RENDER.overageRates;
+
+    let cost = 0;
+    let plan = 'Free';
+
+    // Determine plan - free has no bandwidth, starter has 100GB included
+    if (bandwidth > 0 || compute > 0 || privLink > 0) {
+        plan = 'Starter';
+        cost = plans.starter.monthlyCost;
+
+        // Bandwidth overage beyond 100GB included
+        if (bandwidth > plans.starter.includedBandwidthGB) {
+            const overageBw = bandwidth - plans.starter.includedBandwidthGB;
+            cost += (overageBw / 100) * rates.bandwidth.costPer100GB;
+        }
+
+        // Compute overage
+        if (compute > 0) {
+            cost += compute * rates.compute.costPerHour;
+        }
+
+        // Private link traffic overage
+        if (privLink > 0) {
+            cost += (privLink / 100) * rates.privateLinkTraffic.costPer100GB;
+        }
+    }
+
+    return {
+        plan: plan,
+        monthlyCost: Math.round(cost * 100) / 100,
+        breakdown: `Usage: ${bandwidth.toFixed(1)}GB BW, ${compute.toFixed(1)}GB-h compute`
+    };
 }
 
 function calculateCost(totalCredits) {
@@ -211,7 +358,7 @@ function syncInputs(rangeEl, numberEl, value) {
 }
 
 function updateAll() {
-    // read current values
+    // read current values - existing inputs
     const aiVal = parseFloat(aiNumber.value) || 0;
     const computeVal = parseFloat(computeNumber.value) || 0;
     const reqVal = parseFloat(reqNumber.value) || 0;
@@ -219,7 +366,14 @@ function updateAll() {
     const formVal = parseFloat(formNumber.value) || 0;
     const deployVal = parseFloat(deployNumber.value) || 0;
 
-    // calculate credits
+    // read current values - provider-specific inputs
+    const fnInvocVal = parseFloat(fnInvocNumber.value) || 0;
+    const isrVal = parseFloat(isrNumber.value) || 0;
+    const imgOptVal = parseFloat(imgOptNumber.value) || 0;
+    const storageVal = parseFloat(storageNumber.value) || 0;
+    const privLinkVal = parseFloat(privLinkNumber.value) || 0;
+
+    // calculate Netlify credits
     const aiCredits = aiVal * CREDITS_PER_AI_DOLLAR;
     const computeCredits = computeVal * CREDITS_PER_GBH;
     const reqCredits = reqVal * CREDITS_PER_10K_REQUESTS;
@@ -227,7 +381,7 @@ function updateAll() {
     const formCredits = formVal * CREDITS_PER_FORM;
     const deployCredits = deployVal * CREDITS_PER_DEPLOY;
 
-    // update hints
+    // update Netlify credit hints
     aiCredSpan.textContent = Math.round(aiCredits * 10) / 10 + ' cr';
     computeCredSpan.textContent = Math.round(computeCredits * 10) / 10 + ' cr';
     reqCredSpan.textContent = Math.round(reqCredits * 10) / 10 + ' cr';
@@ -235,7 +389,7 @@ function updateAll() {
     formCredSpan.textContent = Math.round(formCredits * 10) / 10 + ' cr';
     deployCredSpan.textContent = Math.round(deployCredits * 10) / 10 + ' cr';
 
-    // total credits
+    // total Netlify credits
     const total = aiCredits + computeCredits + reqCredits + bwCredits + formCredits + deployCredits;
     totalSpan.textContent = total.toFixed(1);
 
@@ -256,14 +410,44 @@ function updateAll() {
         fillBar.style.background = '#8b0000'; // dark red - overage
     }
 
-    // calculate cost and plan
-    const costData = calculateCost(total);
+    // calculate Netlify cost and plan
+    const netlifyData = calculateCost(total);
 
-    // display estimated cost
-    costSpan.textContent = '$' + costData.cost;
+    // display Netlify estimated cost in the bar section
+    costSpan.textContent = '$' + netlifyData.cost;
+    planHint.innerHTML = `${netlifyData.plan} · ${netlifyData.details} · <strong>$${netlifyData.cost}/month</strong>`;
 
-    // plan hint with cost
-    planHint.innerHTML = `${costData.plan} · ${costData.details} · <strong>$${costData.cost}/month</strong>`;
+    // Calculate Vercel cost
+    const vercelData = calculateVercelCost({
+        bandwidth: bwVal,
+        compute: computeVal,
+        req: reqVal * 10000,
+        ai: aiVal,
+        fnInvoc: fnInvocVal,
+        isr: isrVal,
+        imgOpt: imgOptVal,
+        storage: storageVal
+    });
+
+    // Calculate Render cost
+    const renderData = calculateRenderCost({
+        bandwidth: bwVal,
+        compute: computeVal,
+        privLink: privLinkVal
+    });
+
+    // Update provider result columns
+    netlifyCreditsSpan.textContent = Math.round(total * 10) / 10 + ' credits';
+    netlifyPlanSpan.textContent = netlifyData.plan;
+    netlifyMonthlyCostSpan.textContent = '$' + netlifyData.cost + '/mo';
+
+    vercelCreditsSpan.textContent = '-';
+    vercelPlanSpan.textContent = vercelData.plan;
+    vercelMonthlyCostSpan.textContent = '$' + vercelData.monthlyCost + '/mo';
+
+    renderCreditsSpan.textContent = '-';
+    renderPlanSpan.textContent = renderData.plan;
+    renderMonthlyCostSpan.textContent = '$' + renderData.monthlyCost + '/mo';
 
     // sync sliders and update backgrounds
     syncInputs(aiRange, aiNumber, aiVal);
@@ -272,6 +456,11 @@ function updateAll() {
     syncInputs(bwRange, bwNumber, bwVal);
     syncInputs(formRange, formNumber, formVal);
     syncInputs(deployRange, deployNumber, deployVal);
+    syncInputs(fnInvocRange, fnInvocNumber, fnInvocVal);
+    syncInputs(isrRange, isrNumber, isrVal);
+    syncInputs(imgOptRange, imgOptNumber, imgOptVal);
+    syncInputs(storageRange, storageNumber, storageVal);
+    syncInputs(privLinkRange, privLinkNumber, privLinkVal);
 
     updateRangeBackground(aiRange);
     updateRangeBackground(computeRange);
@@ -279,6 +468,11 @@ function updateAll() {
     updateRangeBackground(bwRange);
     updateRangeBackground(formRange);
     updateRangeBackground(deployRange);
+    updateRangeBackground(fnInvocRange);
+    updateRangeBackground(isrRange);
+    updateRangeBackground(imgOptRange);
+    updateRangeBackground(storageRange);
+    updateRangeBackground(privLinkRange);
 
     // save to URL and storage
     const values = {
@@ -287,7 +481,12 @@ function updateAll() {
         req: reqVal,
         bw: bwVal,
         form: formVal,
-        deploy: deployVal
+        deploy: deployVal,
+        fnInvoc: fnInvocVal,
+        isr: isrVal,
+        imgOpt: imgOptVal,
+        storage: storageVal,
+        privLink: privLinkVal
     };
     saveToURL(values);
     saveToStorage(values);
@@ -318,9 +517,14 @@ bindPair(reqRange, reqNumber);
 bindPair(bwRange, bwNumber);
 bindPair(formRange, formNumber);
 bindPair(deployRange, deployNumber);
+bindPair(fnInvocRange, fnInvocNumber);
+bindPair(isrRange, isrNumber);
+bindPair(imgOptRange, imgOptNumber);
+bindPair(storageRange, storageNumber);
+bindPair(privLinkRange, privLinkNumber);
 
 // blur clamping
-[aiNumber, computeNumber, reqNumber, bwNumber, formNumber, deployNumber].forEach(inp => {
+[aiNumber, computeNumber, reqNumber, bwNumber, formNumber, deployNumber, fnInvocNumber, isrNumber, imgOptNumber, storageNumber, privLinkNumber].forEach(inp => {
     inp.addEventListener('blur', function() {
         let val = parseFloat(this.value);
         const min = parseFloat(this.min);
@@ -336,6 +540,11 @@ bindPair(deployRange, deployNumber);
         else if (this === bwNumber) bwRange.value = val;
         else if (this === formNumber) formRange.value = val;
         else if (this === deployNumber) deployRange.value = val;
+        else if (this === fnInvocNumber) fnInvocRange.value = val;
+        else if (this === isrNumber) isrRange.value = val;
+        else if (this === imgOptNumber) imgOptRange.value = val;
+        else if (this === storageNumber) storageRange.value = val;
+        else if (this === privLinkNumber) privLinkRange.value = val;
         updateAll();
     });
 });
@@ -352,6 +561,11 @@ async function initialize() {
         bwNumber.value = initialValues.bw;
         formNumber.value = initialValues.form;
         deployNumber.value = initialValues.deploy;
+        fnInvocNumber.value = initialValues.fnInvoc || 0;
+        isrNumber.value = initialValues.isr || 0;
+        imgOptNumber.value = initialValues.imgOpt || 0;
+        storageNumber.value = initialValues.storage || 0;
+        privLinkNumber.value = initialValues.privLink || 0;
     }
 
     updateAll();

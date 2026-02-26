@@ -1,60 +1,43 @@
 {
-  "conversionRates": {
-    "ai": {
-      "creditsPerUnit": 180,
-      "unit": "USD",
-      "description": "AI inference spend"
+  "netlify": {
+    "conversionRates": {
+      "ai": { "creditsPerUnit": 180, "unit": "USD", "description": "AI inference spend" },
+      "compute": { "creditsPerUnit": 5, "unit": "GB-hour", "description": "Compute usage" },
+      "requests": { "creditsPerUnit": 3, "unit": "10,000 requests", "description": "Web requests" },
+      "bandwidth": { "creditsPerUnit": 10, "unit": "GB", "description": "Bandwidth usage" },
+      "forms": { "creditsPerUnit": 1, "unit": "submission", "description": "Form submissions" },
+      "deploys": { "creditsPerUnit": 15, "unit": "deploy", "description": "Production deploys" }
     },
-    "compute": {
-      "creditsPerUnit": 5,
-      "unit": "GB-hour",
-      "description": "Compute usage"
+    "pricingTiers": [
+      { "name": "Free", "creditMax": 300, "monthlyCost": 0, "description": "300 credits included" },
+      { "name": "Personal", "creditMax": 1000, "monthlyCost": 9, "description": "1,000 credits/month" },
+      { "name": "Pro", "creditMax": 3000, "monthlyCost": 20, "description": "3,000 credits/month" }
+    ],
+    "overageCost": { "basePlanCost": 20, "creditsPerPack": 1500, "costPerPack": 10, "description": "Additional packs beyond Pro tier" }
+  },
+  "vercel": {
+    "plans": {
+      "hobby": { "monthlyCost": 0, "includedBandwidthGB": 100, "includedComputeHours": 4, "includedEdgeRequestsMillion": 1 },
+      "pro": { "monthlyCost": 20, "includedBandwidthGB": 1024, "includedComputeHours": 40, "includedEdgeRequestsMillion": 10 }
     },
-    "requests": {
-      "creditsPerUnit": 3,
-      "unit": "10,000 requests",
-      "description": "Web requests"
-    },
-    "bandwidth": {
-      "creditsPerUnit": 10,
-      "unit": "GB",
-      "description": "Bandwidth usage"
-    },
-    "forms": {
-      "creditsPerUnit": 1,
-      "unit": "submission",
-      "description": "Form submissions"
-    },
-    "deploys": {
-      "creditsPerUnit": 15,
-      "unit": "deploy",
-      "description": "Production deploys"
+    "overageRates": {
+      "bandwidth": { "costPerGB": 0.15 },
+      "edgeRequests": { "costPerMillion": 2 },
+      "functionInvocations": { "costPerMillion": 0.6 },
+      "isrOperations": { "costPer10k": 0.04 },
+      "imageOptimization": { "costPer1000": 5 },
+      "storage": { "costPerGBMonth": 0.023 }
     }
   },
-  "pricingTiers": [
-    {
-      "name": "Free",
-      "creditMax": 300,
-      "monthlyCost": 0,
-      "description": "300 credits included"
+  "render": {
+    "plans": {
+      "free": { "monthlyCost": 0, "includedBandwidthGB": 0 },
+      "starter": { "monthlyCost": 7, "includedBandwidthGB": 100 }
     },
-    {
-      "name": "Personal",
-      "creditMax": 1000,
-      "monthlyCost": 9,
-      "description": "1,000 credits/month"
-    },
-    {
-      "name": "Pro",
-      "creditMax": 3000,
-      "monthlyCost": 20,
-      "description": "3,000 credits/month"
+    "overageRates": {
+      "bandwidth": { "costPer100GB": 15 },
+      "compute": { "costPerHour": 0.0695 },
+      "privateLinkTraffic": { "costPer100GB": 5 }
     }
-  ],
-  "overageCost": {
-    "basePlanCost": 20,
-    "creditsPerPack": 1500,
-    "costPerPack": 10,
-    "description": "Additional packs beyond Pro tier"
   }
 }
