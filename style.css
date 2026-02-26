@@ -25,13 +25,12 @@ html {
 body {
     font-family: var(--font-body);
     max-width: 700px;
-    margin: 1.5rem auto 1.5rem auto;
+    margin: 1.5rem auto;
     padding: 1rem;
     background: var(--color-bg);
     color: var(--color-text);
     line-height: 1.6;
     overflow-x: hidden;
-    padding-top: 110px;
 }
 
 /* ===== CARD ===== */
@@ -514,22 +513,33 @@ input[type=number]:focus {
     color: var(--color-text);
 }
 
-/* ===== PROVIDER RESULTS GRID - Frozen Header ===== */
+/* ===== PROVIDER RESULTS GRID ===== */
 .provider-results {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 12px;
+    padding: 12px 1rem;
+    margin: 0 -1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    background: var(--color-card);
+    border-bottom: 1px solid var(--color-border);
+    z-index: 100;
+    transition: box-shadow 0.3s ease, opacity 0.3s ease;
+}
+
+/* When scrolled and fixed */
+.provider-results.is-fixed {
     position: fixed;
     top: 0;
-    left: 0;
-    right: 0;
-    z-index: 100;
-    background: var(--color-bg);
-    padding: 12px 1rem;
-    border-bottom: 1px solid var(--color-border);
-    max-width: 700px;
-    margin: 0 auto;
+    left: 50%;
+    transform: translateX(-50%);
     width: calc(100% - 2rem);
+    max-width: 700px;
+    background: var(--color-card);
+    padding: 12px 1rem;
+    margin: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .provider-col {
@@ -566,14 +576,15 @@ input[type=number]:focus {
 
 /* Mobile: provider results stack */
 @media (max-width: 575px) {
-    body {
-        padding-top: 130px;
-    }
-
     .provider-results {
         grid-template-columns: 1fr;
         padding: 12px 0.5rem;
-        width: calc(100% - 1rem);
+        margin: 0 -0.5rem;
+    }
+
+    .provider-results.is-fixed {
+        padding: 12px 1rem;
+        margin: 0;
     }
 }
 
@@ -602,7 +613,6 @@ input[type=number]:focus {
     body {
         margin: 2rem auto;
         padding: 1rem;
-        padding-top: 120px;
     }
 
     .card {
@@ -624,8 +634,15 @@ input[type=number]:focus {
     }
 
     .provider-results {
-        padding: 12px 2rem;
-        width: calc(100% - 4rem);
+        margin: 0 -2rem;
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+
+    .provider-results.is-fixed {
+        width: calc(100% - 2rem);
+        padding-left: 2rem;
+        padding-right: 2rem;
     }
 
     /* Desktop: 5-column grid layout */

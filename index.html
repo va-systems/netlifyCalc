@@ -28,37 +28,37 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<!-- Provider Cost Comparison - Frozen Header -->
-<div class="provider-results">
-    <div class="provider-col" id="netlifyResult">
-        <div class="provider-col-header">
-            <span class="badge-initials netlify">N</span> Netlify
-        </div>
-        <div class="col-credits" id="netlifyCredits">0 credits</div>
-        <div class="col-plan" id="netlifyPlan">Free</div>
-        <div class="col-cost" id="netlifyMonthly">$0/mo</div>
-    </div>
-    <div class="provider-col" id="vercelResult">
-        <div class="provider-col-header">
-            <span class="badge-initials vercel">V</span> Vercel
-        </div>
-        <div class="col-credits" id="vercelCredits">-</div>
-        <div class="col-plan" id="vercelPlan">Hobby</div>
-        <div class="col-cost" id="vercelMonthly">$0/mo</div>
-    </div>
-    <div class="provider-col" id="renderResult">
-        <div class="provider-col-header">
-            <span class="badge-initials render">R</span> Render
-        </div>
-        <div class="col-credits" id="renderCredits">-</div>
-        <div class="col-plan" id="renderPlan">Free</div>
-        <div class="col-cost" id="renderMonthly">$0/mo</div>
-    </div>
-</div>
-
 <div class="card" role="main">
     <h2>Netlify Credit Calculator</h2>
     <p class="note">Estimate your monthly billing costs based on resource usage. Defaults reflect a low-usage personal project.</p>
+
+    <!-- Provider Cost Comparison -->
+    <div class="provider-results" id="providerResults">
+        <div class="provider-col" id="netlifyResult">
+            <div class="provider-col-header">
+                <span class="badge-initials netlify">N</span> Netlify
+            </div>
+            <div class="col-credits" id="netlifyCredits">0 credits</div>
+            <div class="col-plan" id="netlifyPlan">Free</div>
+            <div class="col-cost" id="netlifyMonthly">$0/mo</div>
+        </div>
+        <div class="provider-col" id="vercelResult">
+            <div class="provider-col-header">
+                <span class="badge-initials vercel">V</span> Vercel
+            </div>
+            <div class="col-credits" id="vercelCredits">-</div>
+            <div class="col-plan" id="vercelPlan">Hobby</div>
+            <div class="col-cost" id="vercelMonthly">$0/mo</div>
+        </div>
+        <div class="provider-col" id="renderResult">
+            <div class="provider-col-header">
+                <span class="badge-initials render">R</span> Render
+            </div>
+            <div class="col-credits" id="renderCredits">-</div>
+            <div class="col-plan" id="renderPlan">Free</div>
+            <div class="col-cost" id="renderMonthly">$0/mo</div>
+        </div>
+    </div>
 
     <div class="preset-buttons">
         <button onclick="loadPreset('blog')" class="btn btn-outline-secondary btn-sm">Personal Blog/Webapp</button>

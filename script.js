@@ -572,3 +572,38 @@ async function initialize() {
 }
 
 initialize();
+
+// ----- Sticky provider-results handler -----
+const providerResults = document.getElementById('providerResults');
+const card = document.querySelector('.card');
+
+function handleProviderResultsSticky() {
+    if (!providerResults || !card) return;
+
+    const providerRect = providerResults.getBoundingClientRect();
+    const cardRect = card.getBoundingClientRect();
+    const isCurrentlyFixed = providerResults.classList.contains('is-fixed');
+
+    // Check if provider-results should be fixed (scrolled past the top)
+    // Account for card being within viewport
+    const shouldBeFixed = providerRect.top <= 0 && cardRect.top < 0;
+
+    if (shouldBeFixed && !isCurrentlyFixed) {
+        providerResults.classList.add('is-fixed');
+    } else if (!shouldBeFixed && isCurrentlyFixed) {
+        providerResults.classList.remove('is-fixed');
+    }
+}
+
+// Listen to scroll events with throttling for performance
+let scrollTimeout;
+window.addEventListener('scroll', function() {
+    if (scrollTimeout) return;
+    scrollTimeout = setTimeout(() => {
+        handleProviderResultsSticky();
+        scrollTimeout = null;
+    }, 10);
+}, { passive: true });
+
+// Initial check
+handleProviderResultsSticky();
