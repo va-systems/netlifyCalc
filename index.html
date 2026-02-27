@@ -66,197 +66,218 @@
         <button onclick="loadPreset('saas_large')" class="btn btn-outline-secondary btn-sm">Major SaaS 100K users</button>
     </div>
 
-    <!-- metered features – max values updated to logical caps (based on 3000 credits) -->
-    <div class="meter-row">
-        <span class="meter-label">
-            <span class="label-text">AI inference <small>(USD)</small></span>
-            <span class="tooltip-container">
-                <span class="tooltip-icon">i</span>
-                <div class="tooltip-content">Costs associated with using AI agents and models through Netlify's AI services</div>
-            </span>
-        </span>
-        <input type="range" id="aiRange" min="0" max="20" step="0.01" value="0.2" aria-label="AI inference spend in USD">
-        <input type="number" id="aiNumber" min="0" max="20" step="0.01" value="0.20" aria-label="AI inference spend in USD">
-        <span class="credit-hint" id="aiCredits">0</span>
-        <span class="provider-badges">
-            <span class="badge-initials netlify" title="Netlify">N</span>
-            <span class="badge-initials vercel" title="Vercel">V</span>
-        </span>
+    <!-- Filter tabs -->
+    <div class="filter-tabs">
+        <button class="filter-tab is-active" onclick="filterByProvider('all')">All</button>
+        <button class="filter-tab" onclick="filterByProvider('netlify')">Netlify</button>
+        <button class="filter-tab" onclick="filterByProvider('vercel')">Vercel</button>
+        <button class="filter-tab" onclick="filterByProvider('render')">Render</button>
     </div>
-    <div class="meter-row">
-        <span class="meter-label">
-            <span class="label-text">Compute <small>(GB‑h)</small></span>
-            <span class="tooltip-container">
-                <span class="tooltip-icon">i</span>
-                <div class="tooltip-content">Time and memory allocated to serverless functions, scheduled jobs, and background processing</div>
+
+    <!-- metered features organized by category -->
+    <!-- Category: Compute & Execution -->
+    <div class="category-group">
+        <div class="category-group-header">Compute & Execution</div>
+        <div class="meter-row" data-providers="netlify vercel render">
+            <span class="meter-label">
+                <span class="label-text">Compute <small>(GB‑h)</small></span>
+                <span class="tooltip-container">
+                    <span class="tooltip-icon">i</span>
+                    <div class="tooltip-content">Time and memory allocated to serverless functions, scheduled jobs, and background processing</div>
+                </span>
             </span>
-        </span>
-        <input type="range" id="computeRange" min="0" max="600" step="0.5" value="2.0" aria-label="Compute usage in GB-hours">
-        <input type="number" id="computeNumber" min="0" max="600" step="0.5" value="2.0" aria-label="Compute usage in GB-hours">
-        <span class="credit-hint" id="computeCredits">0</span>
-        <span class="provider-badges">
-            <span class="badge-initials netlify" title="Netlify">N</span>
-            <span class="badge-initials vercel" title="Vercel">V</span>
-            <span class="badge-initials render" title="Render">R</span>
-        </span>
+            <input type="range" id="computeRange" min="0" max="600" step="0.5" value="2.0" aria-label="Compute usage in GB-hours">
+            <input type="number" id="computeNumber" min="0" max="600" step="0.5" value="2.0" aria-label="Compute usage in GB-hours">
+            <span class="credit-hint" id="computeCredits">0</span>
+            <span class="provider-badges">
+                <span class="badge-initials netlify" title="Netlify">N</span>
+                <span class="badge-initials vercel" title="Vercel">V</span>
+                <span class="badge-initials render" title="Render">R</span>
+            </span>
+        </div>
+        <div class="meter-row" data-providers="vercel">
+            <span class="meter-label">
+                <span class="label-text">Function invocations <small>(M)</small></span>
+                <span class="tooltip-container">
+                    <span class="tooltip-icon">i</span>
+                    <div class="tooltip-content">Number of serverless function invocations executed</div>
+                </span>
+            </span>
+            <input type="range" id="fnInvocRange" min="0" max="100" step="0.1" value="0" aria-label="Function invocations in millions">
+            <input type="number" id="fnInvocNumber" min="0" max="100" step="0.1" value="0" aria-label="Function invocations in millions">
+            <span class="credit-hint">Vercel</span>
+            <span class="provider-badges">
+                <span class="badge-initials inactive" title="Not supported">N</span>
+                <span class="badge-initials vercel" title="Vercel">V</span>
+                <span class="badge-initials inactive" title="Not supported">R</span>
+            </span>
+        </div>
+        <div class="meter-row" data-providers="netlify">
+            <span class="meter-label">
+                <span class="label-text">Production deploys</span>
+                <span class="tooltip-container">
+                    <span class="tooltip-icon">i</span>
+                    <div class="tooltip-content">Publishing your project to the production environment</div>
+                </span>
+            </span>
+            <input type="range" id="deployRange" min="0" max="200" step="1" value="2" aria-label="Production deploys count">
+            <input type="number" id="deployNumber" min="0" max="200" step="1" value="2" aria-label="Production deploys count">
+            <span class="credit-hint" id="deployCredits">0</span>
+            <span class="provider-badges">
+                <span class="badge-initials netlify" title="Netlify">N</span>
+                <span class="badge-initials inactive" title="Not supported">V</span>
+                <span class="badge-initials inactive" title="Not supported">R</span>
+            </span>
+        </div>
     </div>
-    <div class="meter-row">
-        <span class="meter-label">
-            <span class="label-text">Web requests <small>(10k)</small></span>
+
+    <!-- Category: Data Transfer & Network -->
+    <div class="category-group">
+        <div class="category-group-header">Data Transfer & Network</div>
+        <div class="meter-row" data-providers="netlify vercel">
+            <span class="meter-label">
+                <span class="label-text">Web requests <small>(10k)</small></span>
             <span class="tooltip-container">
                 <span class="tooltip-icon">i</span>
                 <div class="tooltip-content">All HTTP requests to your site, including API calls and edge function execution</div>
             </span>
         </span>
-        <input type="range" id="reqRange" min="0" max="1000" step="1" value="8" aria-label="Web requests in tens of thousands">
-        <input type="number" id="reqNumber" min="0" max="1000" step="1" value="8" aria-label="Web requests in tens of thousands">
-        <span class="credit-hint" id="reqCredits">0</span>
-        <span class="provider-badges">
-            <span class="badge-initials netlify" title="Netlify">N</span>
-            <span class="badge-initials vercel" title="Vercel">V</span>
-        </span>
-    </div>
-    <div class="meter-row">
-        <span class="meter-label">
-            <span class="label-text">Bandwidth <small>(GB)</small></span>
-            <span class="tooltip-container">
-                <span class="tooltip-icon">i</span>
-                <div class="tooltip-content">Total data transferred to visitors from Netlify's global edge network</div>
+            <input type="range" id="reqRange" min="0" max="1000" step="1" value="8" aria-label="Web requests in tens of thousands">
+            <input type="number" id="reqNumber" min="0" max="1000" step="1" value="8" aria-label="Web requests in tens of thousands">
+            <span class="credit-hint" id="reqCredits">0</span>
+            <span class="provider-badges">
+                <span class="badge-initials netlify" title="Netlify">N</span>
+                <span class="badge-initials vercel" title="Vercel">V</span>
             </span>
-        </span>
-        <input type="range" id="bwRange" min="0" max="300" step="0.5" value="1.5" aria-label="Bandwidth usage in gigabytes">
-        <input type="number" id="bwNumber" min="0" max="300" step="0.5" value="1.5" aria-label="Bandwidth usage in gigabytes">
-        <span class="credit-hint" id="bwCredits">0</span>
-        <span class="provider-badges">
-            <span class="badge-initials netlify" title="Netlify">N</span>
-            <span class="badge-initials vercel" title="Vercel">V</span>
-            <span class="badge-initials render" title="Render">R</span>
-        </span>
-    </div>
-    <div class="meter-row">
-        <span class="meter-label">
-            <span class="label-text">Form submissions</span>
-            <span class="tooltip-container">
-                <span class="tooltip-icon">i</span>
-                <div class="tooltip-content">Legitimate form submissions processed by your site (spam is automatically filtered)</div>
+        </div>
+        <div class="meter-row" data-providers="netlify vercel render">
+            <span class="meter-label">
+                <span class="label-text">Bandwidth <small>(GB)</small></span>
+                <span class="tooltip-container">
+                    <span class="tooltip-icon">i</span>
+                    <div class="tooltip-content">Total data transferred to visitors from Netlify's global edge network</div>
+                </span>
             </span>
-        </span>
-        <input type="range" id="formRange" min="0" max="3000" step="1" value="10" aria-label="Form submissions count">
-        <input type="number" id="formNumber" min="0" max="3000" step="1" value="10" aria-label="Form submissions count">
-        <span class="credit-hint" id="formCredits">0</span>
-        <span class="provider-badges">
-            <span class="badge-initials netlify" title="Netlify">N</span>
-            <span class="badge-initials inactive" title="Not supported">V</span>
-            <span class="badge-initials inactive" title="Not supported">R</span>
-        </span>
-    </div>
-    <div class="meter-row">
-        <span class="meter-label">
-            <span class="label-text">Production deploys</span>
-            <span class="tooltip-container">
-                <span class="tooltip-icon">i</span>
-                <div class="tooltip-content">Publishing your project to the production environment</div>
+            <input type="range" id="bwRange" min="0" max="300" step="0.5" value="1.5" aria-label="Bandwidth usage in gigabytes">
+            <input type="number" id="bwNumber" min="0" max="300" step="0.5" value="1.5" aria-label="Bandwidth usage in gigabytes">
+            <span class="credit-hint" id="bwCredits">0</span>
+            <span class="provider-badges">
+                <span class="badge-initials netlify" title="Netlify">N</span>
+                <span class="badge-initials vercel" title="Vercel">V</span>
+                <span class="badge-initials render" title="Render">R</span>
             </span>
-        </span>
-        <input type="range" id="deployRange" min="0" max="200" step="1" value="2" aria-label="Production deploys count">
-        <input type="number" id="deployNumber" min="0" max="200" step="1" value="2" aria-label="Production deploys count">
-        <span class="credit-hint" id="deployCredits">0</span>
-        <span class="provider-badges">
-            <span class="badge-initials netlify" title="Netlify">N</span>
-            <span class="badge-initials inactive" title="Not supported">V</span>
-            <span class="badge-initials inactive" title="Not supported">R</span>
-        </span>
+        </div>
+        <div class="meter-row" data-providers="render">
+            <span class="meter-label">
+                <span class="label-text">Private link traffic <small>(GB)</small></span>
+                <span class="tooltip-container">
+                    <span class="tooltip-icon">i</span>
+                    <div class="tooltip-content">Data transferred via Render's private link between services</div>
+                </span>
+            </span>
+            <input type="range" id="privLinkRange" min="0" max="500" step="0.1" value="0" aria-label="Private link traffic in gigabytes">
+            <input type="number" id="privLinkNumber" min="0" max="500" step="0.1" value="0" aria-label="Private link traffic in gigabytes">
+            <span class="credit-hint">Render</span>
+            <span class="provider-badges">
+                <span class="badge-initials inactive" title="Not supported">N</span>
+                <span class="badge-initials inactive" title="Not supported">V</span>
+                <span class="badge-initials render" title="Render">R</span>
+            </span>
+        </div>
     </div>
 
-    <!-- Vercel-specific rows -->
-    <div class="section-label">Vercel-specific metrics</div>
-    <div class="meter-row">
-        <span class="meter-label">
-            <span class="label-text">Function invocations <small>(M)</small></span>
-            <span class="tooltip-container">
-                <span class="tooltip-icon">i</span>
-                <div class="tooltip-content">Number of serverless function invocations executed</div>
+    <!-- Category: Content & Optimization -->
+    <div class="category-group">
+        <div class="category-group-header">Content & Optimization</div>
+        <div class="meter-row" data-providers="netlify vercel">
+            <span class="meter-label">
+                <span class="label-text">AI inference <small>(USD)</small></span>
+                <span class="tooltip-container">
+                    <span class="tooltip-icon">i</span>
+                    <div class="tooltip-content">Costs associated with using AI agents and models through Netlify's AI services</div>
+                </span>
             </span>
-        </span>
-        <input type="range" id="fnInvocRange" min="0" max="100" step="0.1" value="0" aria-label="Function invocations in millions">
-        <input type="number" id="fnInvocNumber" min="0" max="100" step="0.1" value="0" aria-label="Function invocations in millions">
-        <span class="credit-hint">Vercel</span>
-        <span class="provider-badges">
-            <span class="badge-initials inactive" title="Not supported">N</span>
-            <span class="badge-initials vercel" title="Vercel">V</span>
-            <span class="badge-initials inactive" title="Not supported">R</span>
-        </span>
-    </div>
-    <div class="meter-row">
-        <span class="meter-label">
-            <span class="label-text">ISR operations <small>(10k)</small></span>
-            <span class="tooltip-container">
-                <span class="tooltip-icon">i</span>
-                <div class="tooltip-content">Incremental Static Regeneration revalidation operations</div>
+            <input type="range" id="aiRange" min="0" max="20" step="0.01" value="0.2" aria-label="AI inference spend in USD">
+            <input type="number" id="aiNumber" min="0" max="20" step="0.01" value="0.20" aria-label="AI inference spend in USD">
+            <span class="credit-hint" id="aiCredits">0</span>
+            <span class="provider-badges">
+                <span class="badge-initials netlify" title="Netlify">N</span>
+                <span class="badge-initials vercel" title="Vercel">V</span>
             </span>
-        </span>
-        <input type="range" id="isrRange" min="0" max="1000" step="1" value="0" aria-label="ISR operations in tens of thousands">
-        <input type="number" id="isrNumber" min="0" max="1000" step="1" value="0" aria-label="ISR operations in tens of thousands">
-        <span class="credit-hint">Vercel</span>
-        <span class="provider-badges">
-            <span class="badge-initials inactive" title="Not supported">N</span>
-            <span class="badge-initials vercel" title="Vercel">V</span>
-            <span class="badge-initials inactive" title="Not supported">R</span>
-        </span>
-    </div>
-    <div class="meter-row">
-        <span class="meter-label">
-            <span class="label-text">Image optimization <small>(1k req)</small></span>
-            <span class="tooltip-container">
-                <span class="tooltip-icon">i</span>
-                <div class="tooltip-content">Requests to optimized images served through Vercel's Image Optimization API</div>
+        </div>
+        <div class="meter-row" data-providers="vercel">
+            <span class="meter-label">
+                <span class="label-text">Image optimization <small>(1k req)</small></span>
+                <span class="tooltip-container">
+                    <span class="tooltip-icon">i</span>
+                    <div class="tooltip-content">Requests to optimized images served through Vercel's Image Optimization API</div>
+                </span>
             </span>
-        </span>
-        <input type="range" id="imgOptRange" min="0" max="1000" step="1" value="0" aria-label="Image optimization requests in thousands">
-        <input type="number" id="imgOptNumber" min="0" max="1000" step="1" value="0" aria-label="Image optimization requests in thousands">
-        <span class="credit-hint">Vercel</span>
-        <span class="provider-badges">
-            <span class="badge-initials inactive" title="Not supported">N</span>
-            <span class="badge-initials vercel" title="Vercel">V</span>
-            <span class="badge-initials inactive" title="Not supported">R</span>
-        </span>
-    </div>
-    <div class="meter-row">
-        <span class="meter-label">
-            <span class="label-text">Storage <small>(GB)</small></span>
-            <span class="tooltip-container">
-                <span class="tooltip-icon">i</span>
-                <div class="tooltip-content">Vercel KV or PostgreSQL database storage allocation</div>
+            <input type="range" id="imgOptRange" min="0" max="1000" step="1" value="0" aria-label="Image optimization requests in thousands">
+            <input type="number" id="imgOptNumber" min="0" max="1000" step="1" value="0" aria-label="Image optimization requests in thousands">
+            <span class="credit-hint">Vercel</span>
+            <span class="provider-badges">
+                <span class="badge-initials inactive" title="Not supported">N</span>
+                <span class="badge-initials vercel" title="Vercel">V</span>
+                <span class="badge-initials inactive" title="Not supported">R</span>
             </span>
-        </span>
-        <input type="range" id="storageRange" min="0" max="500" step="0.1" value="0" aria-label="Storage usage in gigabytes">
-        <input type="number" id="storageNumber" min="0" max="500" step="0.1" value="0" aria-label="Storage usage in gigabytes">
-        <span class="credit-hint">Vercel</span>
-        <span class="provider-badges">
-            <span class="badge-initials inactive" title="Not supported">N</span>
-            <span class="badge-initials vercel" title="Vercel">V</span>
-            <span class="badge-initials inactive" title="Not supported">R</span>
-        </span>
+        </div>
+        <div class="meter-row" data-providers="vercel">
+            <span class="meter-label">
+                <span class="label-text">ISR operations <small>(10k)</small></span>
+                <span class="tooltip-container">
+                    <span class="tooltip-icon">i</span>
+                    <div class="tooltip-content">Incremental Static Regeneration revalidation operations</div>
+                </span>
+            </span>
+            <input type="range" id="isrRange" min="0" max="1000" step="1" value="0" aria-label="ISR operations in tens of thousands">
+            <input type="number" id="isrNumber" min="0" max="1000" step="1" value="0" aria-label="ISR operations in tens of thousands">
+            <span class="credit-hint">Vercel</span>
+            <span class="provider-badges">
+                <span class="badge-initials inactive" title="Not supported">N</span>
+                <span class="badge-initials vercel" title="Vercel">V</span>
+                <span class="badge-initials inactive" title="Not supported">R</span>
+            </span>
+        </div>
     </div>
 
-    <!-- Render-specific rows -->
-    <div class="section-label">Render-specific metrics</div>
-    <div class="meter-row">
-        <span class="meter-label">
-            <span class="label-text">Private link traffic <small>(GB)</small></span>
-            <span class="tooltip-container">
-                <span class="tooltip-icon">i</span>
-                <div class="tooltip-content">Data transferred via Render's private link between services</div>
+    <!-- Category: Storage & Data -->
+    <div class="category-group">
+        <div class="category-group-header">Storage & Data</div>
+        <div class="meter-row" data-providers="netlify">
+            <span class="meter-label">
+                <span class="label-text">Form submissions</span>
+                <span class="tooltip-container">
+                    <span class="tooltip-icon">i</span>
+                    <div class="tooltip-content">Legitimate form submissions processed by your site (spam is automatically filtered)</div>
+                </span>
             </span>
-        </span>
-        <input type="range" id="privLinkRange" min="0" max="500" step="0.1" value="0" aria-label="Private link traffic in gigabytes">
-        <input type="number" id="privLinkNumber" min="0" max="500" step="0.1" value="0" aria-label="Private link traffic in gigabytes">
-        <span class="credit-hint">Render</span>
-        <span class="provider-badges">
-            <span class="badge-initials inactive" title="Not supported">N</span>
-            <span class="badge-initials inactive" title="Not supported">V</span>
-            <span class="badge-initials render" title="Render">R</span>
-        </span>
+            <input type="range" id="formRange" min="0" max="3000" step="1" value="10" aria-label="Form submissions count">
+            <input type="number" id="formNumber" min="0" max="3000" step="1" value="10" aria-label="Form submissions count">
+            <span class="credit-hint" id="formCredits">0</span>
+            <span class="provider-badges">
+                <span class="badge-initials netlify" title="Netlify">N</span>
+                <span class="badge-initials inactive" title="Not supported">V</span>
+                <span class="badge-initials inactive" title="Not supported">R</span>
+            </span>
+        </div>
+        <div class="meter-row" data-providers="vercel">
+            <span class="meter-label">
+                <span class="label-text">Storage <small>(GB)</small></span>
+                <span class="tooltip-container">
+                    <span class="tooltip-icon">i</span>
+                    <div class="tooltip-content">Vercel KV or PostgreSQL database storage allocation</div>
+                </span>
+            </span>
+            <input type="range" id="storageRange" min="0" max="500" step="0.1" value="0" aria-label="Storage usage in gigabytes">
+            <input type="number" id="storageNumber" min="0" max="500" step="0.1" value="0" aria-label="Storage usage in gigabytes">
+            <span class="credit-hint">Vercel</span>
+            <span class="provider-badges">
+                <span class="badge-initials inactive" title="Not supported">N</span>
+                <span class="badge-initials vercel" title="Vercel">V</span>
+                <span class="badge-initials inactive" title="Not supported">R</span>
+            </span>
+        </div>
     </div>
 
     <!-- Provider Coverage Matrix -->

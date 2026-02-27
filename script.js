@@ -18,6 +18,9 @@ let OVERAGE_CONFIG = {};
 const STORAGE_KEY = 'netlify_calc_state';
 const URL_PARAM_NAMES = ['ai', 'compute', 'req', 'bw', 'form', 'deploy', 'fnInvoc', 'isr', 'imgOpt', 'storage', 'privLink'];
 
+// ----- filter state -----
+let activeProviderFilter = 'all';
+
 // ----- load configuration from config.json -----
 async function loadConfig() {
     try {
@@ -54,7 +57,12 @@ const PRESETS = {
         req: 1,
         bw: 1,
         form: 5,
-        deploy: 5
+        deploy: 5,
+        fnInvoc: 0.3,
+        isr: 2,
+        imgOpt: 3,
+        storage: 0.2,
+        privLink: 0.5
     },
     saas_small: {
         name: 'Simple SaaS (<1000 users)',
@@ -63,7 +71,12 @@ const PRESETS = {
         req: 40,
         bw: 15,
         form: 200,
-        deploy: 10
+        deploy: 10,
+        fnInvoc: 5,
+        isr: 20,
+        imgOpt: 50,
+        storage: 10,
+        privLink: 30
     },
     saas_large: {
         name: 'Major SaaS (100K users)',
@@ -72,7 +85,12 @@ const PRESETS = {
         req: 5000,
         bw: 500,
         form: 50000,
-        deploy: 50
+        deploy: 50,
+        fnInvoc: 100,
+        isr: 200,
+        imgOpt: 1000,
+        storage: 300,
+        privLink: 1000
     }
 };
 
@@ -134,6 +152,55 @@ const vercelMonthlyCostSpan = document.getElementById('vercelMonthly');
 const renderCreditsSpan = document.getElementById('renderCredits');
 const renderPlanSpan = document.getElementById('renderPlan');
 const renderMonthlyCostSpan = document.getElementById('renderMonthly');
+
+// ----- Filter DOM cache -----
+const allMeterRows = document.querySelectorAll('.meter-row');
+const allCategoryGroups = document.querySelectorAll('.category-group');
+const allFilterTabs = document.querySelectorAll('.filter-tab');
+
+// ----- Filter Function -----
+function filterByProvider(provider) {
+    activeProviderFilter = provider;
+
+    // Update filter tab active states
+    allFilterTabs.forEach(tab => {
+        tab.classList.remove('is-active');
+    });
+    const activeTab = document.querySelector(`.filter-tab[onclick="filterByProvider('${provider}')"]`);
+    if (activeTab) {
+        activeTab.classList.add('is-active');
+    }
+
+    // Filter meter rows
+    allMeterRows.forEach(row => {
+        const providers = row.getAttribute('data-providers');
+        if (!providers) {
+            row.classList.remove('is-hidden');
+            return;
+        }
+
+        if (provider === 'all') {
+            row.classList.remove('is-hidden');
+        } else {
+            const providerArray = providers.split(' ');
+            if (providerArray.includes(provider)) {
+                row.classList.remove('is-hidden');
+            } else {
+                row.classList.add('is-hidden');
+            }
+        }
+    });
+
+    // Hide empty category groups
+    allCategoryGroups.forEach(group => {
+        const visibleRows = group.querySelectorAll('.meter-row:not(.is-hidden)');
+        if (visibleRows.length === 0) {
+            group.classList.add('is-empty');
+        } else {
+            group.classList.remove('is-empty');
+        }
+    });
+}
 
 // ----- URL and Storage Functions -----
 function saveToURL(values) {
@@ -197,6 +264,11 @@ function loadPreset(presetKey) {
     bwNumber.value = preset.bw;
     formNumber.value = preset.form;
     deployNumber.value = preset.deploy;
+    fnInvocNumber.value = preset.fnInvoc || 0;
+    isrNumber.value = preset.isr || 0;
+    imgOptNumber.value = preset.imgOpt || 0;
+    storageNumber.value = preset.storage || 0;
+    privLinkNumber.value = preset.privLink || 0;
     updateAll();
 }
 
