@@ -5,32 +5,58 @@
     <h2>Hosting Calculator</h2>
     <p class="note">Estimate your monthly billing costs based on resource usage. Defaults reflect a low-usage personal project.</p>
 
-    <!-- Provider Cost Comparison -->
-    <div class="provider-results" id="providerResults">
-        <div class="provider-col" id="netlifyResult">
-            <div class="provider-col-header">
-                <span class="badge-initials netlify">N</span> Netlify
-            </div>
-            <div class="col-credits" id="netlifyCredits">0 credits</div>
-            <div class="col-plan" id="netlifyPlan">Free</div>
-            <div class="col-cost" id="netlifyMonthly">$0/mo</div>
+    <!-- Provider Cost Comparison Carousel -->
+    <div id="providerCarousel" class="carousel slide provider-carousel" data-bs-ride="carousel">
+        <!-- Carousel Indicators -->
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#providerCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="View Netlify provider"></button>
+            <button type="button" data-bs-target="#providerCarousel" data-bs-slide-to="1" aria-label="View Vercel provider"></button>
+            <button type="button" data-bs-target="#providerCarousel" data-bs-slide-to="2" aria-label="View Render provider"></button>
         </div>
-        <div class="provider-col" id="vercelResult">
-            <div class="provider-col-header">
-                <span class="badge-initials vercel">V</span> Vercel
+
+        <!-- Carousel Items -->
+        <div class="carousel-inner provider-results" id="providerResults">
+            <div class="carousel-item active">
+                <div class="provider-col" id="netlifyResult">
+                    <div class="provider-col-header">
+                        <span class="badge-initials netlify">N</span> Netlify
+                    </div>
+                    <div class="col-credits" id="netlifyCredits">0 credits</div>
+                    <div class="col-plan" id="netlifyPlan">Free</div>
+                    <div class="col-cost" id="netlifyMonthly">$0/mo</div>
+                </div>
             </div>
-            <div class="col-credits" id="vercelCredits">-</div>
-            <div class="col-plan" id="vercelPlan">Hobby</div>
-            <div class="col-cost" id="vercelMonthly">$0/mo</div>
-        </div>
-        <div class="provider-col" id="renderResult">
-            <div class="provider-col-header">
-                <span class="badge-initials render">R</span> Render
+            <div class="carousel-item">
+                <div class="provider-col" id="vercelResult">
+                    <div class="provider-col-header">
+                        <span class="badge-initials vercel">V</span> Vercel
+                    </div>
+                    <div class="col-credits" id="vercelCredits">-</div>
+                    <div class="col-plan" id="vercelPlan">Hobby</div>
+                    <div class="col-cost" id="vercelMonthly">$0/mo</div>
+                </div>
             </div>
-            <div class="col-credits" id="renderCredits">-</div>
-            <div class="col-plan" id="renderPlan">Free</div>
-            <div class="col-cost" id="renderMonthly">$0/mo</div>
+            <div class="carousel-item">
+                <div class="provider-col" id="renderResult">
+                    <div class="provider-col-header">
+                        <span class="badge-initials render">R</span> Render
+                    </div>
+                    <div class="col-credits" id="renderCredits">-</div>
+                    <div class="col-plan" id="renderPlan">Free</div>
+                    <div class="col-cost" id="renderMonthly">$0/mo</div>
+                </div>
+            </div>
         </div>
+
+        <!-- Carousel Controls (Mobile Only) -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#providerCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous provider</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#providerCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next provider</span>
+        </button>
     </div>
 
     <div class="preset-buttons">
@@ -357,7 +383,17 @@
             <span class="label-top" style="left: 100%">3k</span>
         </div>
 
-        <div id="planHint" class="plan-tag" aria-live="polite">currently within free tier</div>
+        <div class="tier-info">
+            <div id="planHint" class="plan-tag" aria-live="polite">currently within free tier</div>
+            <div id="tierProgress" class="tier-progress" aria-live="polite" style="display:none;">
+                <span class="progress-label">Progress in tier:</span>
+                <div class="progress-bar-small">
+                    <div id="tierFillBar" class="tier-fill"></div>
+                </div>
+                <span class="progress-text" id="progressText">0 / 300</span>
+            </div>
+            <div id="tierCostRange" class="cost-range-info" aria-live="polite"></div>
+        </div>
 
         <div class="total-line cost-line">
             <span class="cost-label">estimated monthly cost</span>
@@ -366,7 +402,7 @@
     </div>
 
     <footer class="calc-footer">
-        <small>Credit calculations based on <a href="https://www.netlify.com/pricing/" target="_blank" rel="noopener">Netlify's credit-based pricing</a>. Rates may change – verify at source. Not affiliated with Netlify.</small>
+        <small><a href="{{ url_for('billing_models') }}">Understand billing models</a> → Credit calculations based on <a href="https://www.netlify.com/pricing/" target="_blank" rel="noopener">Netlify's credit-based pricing</a>. Rates may change – verify at source. Not affiliated with Netlify.</small>
     </footer>
 </div>
 {% endblock %}

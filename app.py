@@ -1,5 +1,6 @@
 import os
-from flask import Flask, render_template
+import json
+from flask import Flask, render_template, jsonify
 from flask_frozen import Freezer
 from config import config_by_name
 
@@ -39,6 +40,17 @@ def register_routes(app):
     def attribution():
         return render_template('attribution.html')
 
+    @app.route('/billing-models')
+    def billing_models():
+        return render_template('billing-models.html')
+
+    @app.route('/config.json')
+    def config():
+        """Serve config.json from root directory"""
+        config_path = os.path.join(os.path.dirname(__file__), 'config.json')
+        with open(config_path, 'r') as f:
+            return jsonify(json.load(f))
+
 
 def create_freezer(app):
     """Create and configure Freezer instance"""
@@ -50,6 +62,7 @@ def create_freezer(app):
         yield '/about'
         yield '/contact'
         yield '/attribution'
+        yield '/billing-models'
 
     return freezer
 

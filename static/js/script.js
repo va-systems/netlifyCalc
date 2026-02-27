@@ -374,6 +374,12 @@ function calculateCost(totalCredits) {
     let cost = 0;
     let plan = '';
     let details = '';
+    let tierKey = 'free';
+    let progressInTier = 0;
+    let tierMax = 0;
+    let nextTierThreshold = 0;
+    let nextTierName = '';
+    let nextTierCost = 0;
 
     // Use config tiers or fallback to defaults
     const tiers = PRICING_TIERS.length > 0 ? PRICING_TIERS : [
@@ -390,9 +396,11 @@ function calculateCost(totalCredits) {
 
     // Find applicable tier
     let applicableTier = tiers[0];
-    for (let tier of tiers) {
-        if (totalCredits <= tier.creditMax) {
-            applicableTier = tier;
+    let tierIndex = 0;
+    for (let i = 0; i < tiers.length; i++) {
+        if (totalCredits <= tiers[i].creditMax) {
+            applicableTier = tiers[i];
+            tierIndex = i;
             break;
         }
     }
@@ -400,6 +408,21 @@ function calculateCost(totalCredits) {
     cost = applicableTier.monthlyCost;
     plan = applicableTier.name;
     details = applicableTier.description;
+    tierKey = applicableTier.name.toLowerCase().replace(/\s+/g, '-');
+
+    // Calculate progress within current tier
+    const tierMin = tierIndex === 0 ? 0 : tiers[tierIndex - 1].creditMax;
+    tierMax = applicableTier.creditMax;
+    progressInTier = totalCredits - tierMin;
+    const tierRange = tierMax - tierMin;
+
+    // Get next tier info
+    if (tierIndex < tiers.length - 1) {
+        const nextTier = tiers[tierIndex + 1];
+        nextTierThreshold = nextTier.creditMax;
+        nextTierName = nextTier.name;
+        nextTierCost = nextTier.monthlyCost;
+    }
 
     // Handle overage
     const maxCreditInTiers = tiers[tiers.length - 1].creditMax;
@@ -410,9 +433,23 @@ function calculateCost(totalCredits) {
         cost = overageConfig.basePlanCost + extraCost;
         plan = plan + ' + Extra';
         details = `${maxCreditInTiers.toLocaleString()} credits + ${extraPacks} extra pack${extraPacks > 1 ? 's' : ''} (${extraPacks * overageConfig.creditsPerPack} extra credits)`;
+        tierKey = 'extra';
+        tierMax = totalCredits + (overageConfig.creditsPerPack - (overage % overageConfig.creditsPerPack));
+        progressInTier = overage % overageConfig.creditsPerPack || overageConfig.creditsPerPack;
     }
 
-    return { cost, plan, details };
+    return {
+        cost,
+        plan,
+        details,
+        tierKey,
+        progressInTier,
+        tierMax,
+        nextTierThreshold,
+        nextTierName,
+        nextTierCost,
+        tierMin
+    };
 }
 
 function updateRangeBackground(rangeEl) {
@@ -487,7 +524,47 @@ function updateAll() {
 
     // display Netlify estimated cost in the bar section
     costSpan.textContent = '$' + netlifyData.cost;
-    planHint.innerHTML = `${netlifyData.plan} · ${netlifyData.details} · <strong>$${netlifyData.cost}/month</strong>`;
+    planHint.innerHTML = `${netlifyData.plan} · <strong>$${netlifyData.cost}/month</strong>`;
+
+    // Update plan tag styling based on tier
+    planHint.className = 'plan-tag tier-' + netlifyData.tierKey;
+
+    // Update tier progress display
+    const tierProgressDiv = document.getElementById('tierProgress');
+    const tierFillBar = document.getElementById('tierFillBar');
+    const progressText = document.getElementById('progressText');
+    const tierCostRangeDiv = document.getElementById('tierCostRange');
+
+    if (netlifyData.tierMax > netlifyData.tierMin && !netlifyData.plan.includes('Extra')) {
+        tierProgressDiv.style.display = 'flex';
+        const tierProgressPercent = Math.min((netlifyData.progressInTier / (netlifyData.tierMax - netlifyData.tierMin)) * 100, 100);
+        tierFillBar.style.width = tierProgressPercent + '%';
+
+        // Color the tier fill based on current tier
+        if (total <= 300) {
+            tierFillBar.style.background = '#2e7d32';
+        } else if (total <= 1000) {
+            tierFillBar.style.background = '#f5a623';
+        } else if (total <= 3000) {
+            tierFillBar.style.background = '#d0021b';
+        }
+
+        progressText.textContent = Math.round(netlifyData.progressInTier) + ' / ' + Math.round(netlifyData.tierMax - netlifyData.tierMin);
+    } else {
+        tierProgressDiv.style.display = 'none';
+    }
+
+    // Update cost range info
+    let costRangeText = '';
+    if (netlifyData.plan.includes('Extra')) {
+        costRangeText = `Overage plan: <strong>$${netlifyData.cost}/month</strong> for ${Math.round(total)} credits (at ${Math.round((total - 3000) / (netlifyData.nextTierCost || 10))} packs)`;
+    } else if (netlifyData.nextTierThreshold) {
+        const creditsUntilNext = netlifyData.nextTierThreshold - total;
+        costRangeText = `${netlifyData.details} · Next tier (${netlifyData.nextTierName}) at <strong>${netlifyData.nextTierThreshold}</strong> credits (+${Math.round(creditsUntilNext)} to jump)`;
+    } else {
+        costRangeText = netlifyData.details;
+    }
+    tierCostRangeDiv.innerHTML = costRangeText;
 
     // Calculate Vercel cost
     const vercelData = calculateVercelCost({
@@ -645,25 +722,25 @@ async function initialize() {
 
 initialize();
 
-// ----- Sticky provider-results handler -----
-const providerResults = document.getElementById('providerResults');
+// ----- Sticky provider carousel handler -----
+const providerCarousel = document.getElementById('providerCarousel');
 const card = document.querySelector('.card');
 
-function handleProviderResultsSticky() {
-    if (!providerResults || !card) return;
+function handleProviderCarouselSticky() {
+    if (!providerCarousel || !card) return;
 
-    const providerRect = providerResults.getBoundingClientRect();
+    const carouselRect = providerCarousel.getBoundingClientRect();
     const cardRect = card.getBoundingClientRect();
-    const isCurrentlyFixed = providerResults.classList.contains('is-fixed');
+    const isCurrentlyFixed = providerCarousel.classList.contains('is-fixed');
 
-    // Check if provider-results should be fixed (scrolled within navbar height)
+    // Check if carousel should be fixed (scrolled within navbar height)
     // Use 56px threshold (navbar height) to create hysteresis and prevent jitter
-    const shouldBeFixed = providerRect.top <= 56 && cardRect.top < 0;
+    const shouldBeFixed = carouselRect.top <= 56 && cardRect.top < 0;
 
     if (shouldBeFixed && !isCurrentlyFixed) {
-        providerResults.classList.add('is-fixed');
+        providerCarousel.classList.add('is-fixed');
     } else if (!shouldBeFixed && isCurrentlyFixed) {
-        providerResults.classList.remove('is-fixed');
+        providerCarousel.classList.remove('is-fixed');
     }
 }
 
@@ -672,10 +749,10 @@ let scrollTimeout;
 window.addEventListener('scroll', function() {
     if (scrollTimeout) return;
     scrollTimeout = setTimeout(() => {
-        handleProviderResultsSticky();
+        handleProviderCarouselSticky();
         scrollTimeout = null;
     }, 10);
 }, { passive: true });
 
 // Initial check
-handleProviderResultsSticky();
+handleProviderCarouselSticky();

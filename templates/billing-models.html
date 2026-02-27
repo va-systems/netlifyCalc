@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+
+{% block title %}Billing Models - Hosting Calculator{% endblock %}
+{% block description %}Understand the differences between consumption-based billing (Netlify) and fixed-plan billing (Vercel, Render).{% endblock %}
+{% block og_title %}Billing Models - Hosting Calculator{% endblock %}
+{% block og_description %}Learn how different hosting providers charge for resources and which billing model might work best for your use case.{% endblock %}
+
+{% block hero %}
+<div class="hero-section">
+    <div class="hero-content">
+        <h1>How Hosting Billing Works</h1>
+        <p>Understand the differences between consumption-based and fixed-plan pricing</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Two Billing Philosophies</h2>
+    <p>Hosting providers use fundamentally different approaches to pricing. Understanding these differences helps you choose the right provider for your project and predict your monthly costs accurately.</p>
+
+    <h3>Consumption-Based Billing</h3>
+    <p><strong>How it works:</strong> You pay for exactly what you use, measured in fine-grained units (GB-hours, API requests, bandwidth). Your pricing tier is determined automatically by your credit consumption. As usage increases, your costs scale proportionally and your tier changes.</p>
+    <p><strong>Best for:</strong> Projects with unpredictable or variable usage, startups experimenting with different workloads, and developers who want minimal commitment.</p>
+    <p><strong>Provider:</strong> Netlify</p>
+
+    <h3>Fixed-Plan Billing</h3>
+    <p><strong>How it works:</strong> You choose a pricing plan upfront (e.g., Hobby or Pro). Each plan includes specific resource allowances. If you exceed those limits, you pay overage charges per unit. Your tier remains fixed until you manually upgrade.</p>
+    <p><strong>Best for:</strong> Projects with predictable usage patterns, teams wanting budget predictability, and applications that benefit from consistent resource guarantees.</p>
+    <p><strong>Providers:</strong> Vercel, Render</p>
+
+    <hr class="my-4">
+
+    <h2>Netlify: Credit-Based Consumption</h2>
+    <p>Netlify measures usage in <strong>credits</strong>. Different features consume credits at different rates. Your monthly cost is determined by which tier your total credits fall into.</p>
+
+    <h3>Credit Consumption Rates</h3>
+    <table class="comparison-table">
+        <thead>
+            <tr>
+                <th>Metric</th>
+                <th>Unit</th>
+                <th>Credits per Unit</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>AI Inference</td>
+                <td>$1 USD spent</td>
+                <td>180</td>
+            </tr>
+            <tr>
+                <td>Compute</td>
+                <td>GB-hour</td>
+                <td>5</td>
+            </tr>
+            <tr>
+                <td>Web Requests</td>
+                <td>10,000 requests</td>
+                <td>3</td>
+            </tr>
+            <tr>
+                <td>Bandwidth</td>
+                <td>GB</td>
+                <td>10</td>
+            </tr>
+            <tr>
+                <td>Form Submissions</td>
+                <td>submission</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>Production Deploys</td>
+                <td>deploy</td>
+                <td>15</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Pricing Tiers</h3>
+    <table class="comparison-table">
+        <thead>
+            <tr>
+                <th>Tier</th>
+                <th>Credit Range</th>
+                <th>Monthly Cost</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Free</td>
+                <td>0 - 300</td>
+                <td>$0</td>
+                <td>Always free tier included</td>
+            </tr>
+            <tr>
+                <td>Personal</td>
+                <td>301 - 1,000</td>
+                <td>$9</td>
+                <td>1,000 credits per month</td>
+            </tr>
+            <tr>
+                <td>Pro</td>
+                <td>1,001 - 3,000</td>
+                <td>$20</td>
+                <td>3,000 credits per month</td>
+            </tr>
+            <tr>
+                <td>Extra (Pay-as-you-go)</td>
+                <td>3,000+</td>
+                <td>$20 base + $10 per 1,500 credits</td>
+                <td>Additional credit packs beyond Pro</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p><strong>Key insight:</strong> Because your tier is determined by actual usage, moving between tiers is automatic. This is why the calculator shows dynamic tier changes as you adjust usage - you're seeing your real pricing impact in real-time.</p>
+
+    <hr class="my-4">
+
+    <h2>Vercel: Fixed Plans with Overages</h2>
+    <p>Vercel offers fixed pricing plans where you choose Hobby or Pro. Each plan includes specific allowances; going over triggers per-unit overage charges.</p>
+
+    <h3>Plans and Included Resources</h3>
+    <table class="comparison-table">
+        <thead>
+            <tr>
+                <th>Plan</th>
+                <th>Monthly Cost</th>
+                <th>Bandwidth</th>
+                <th>Compute (Functions)</th>
+                <th>Edge Requests</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Hobby</td>
+                <td>Free ($0)</td>
+                <td>100 GB/mo</td>
+                <td>400 MB-hours/mo</td>
+                <td>1M/mo</td>
+            </tr>
+            <tr>
+                <td>Pro</td>
+                <td>$20</td>
+                <td>1,024 GB/mo</td>
+                <td>40 GB-hours/mo</td>
+                <td>10M/mo</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Overage Rates</h3>
+    <table class="comparison-table">
+        <thead>
+            <tr>
+                <th>Feature</th>
+                <th>Overage Rate</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Bandwidth</td>
+                <td>$0.15 per GB</td>
+            </tr>
+            <tr>
+                <td>Edge Requests</td>
+                <td>$2 per million</td>
+            </tr>
+            <tr>
+                <td>Function Invocations</td>
+                <td>$0.60 per million</td>
+            </tr>
+            <tr>
+                <td>ISR Operations</td>
+                <td>$0.04 per 10,000</td>
+            </tr>
+            <tr>
+                <td>Image Optimization</td>
+                <td>$5 per 1,000 requests</td>
+            </tr>
+            <tr>
+                <td>Storage (KV/DB)</td>
+                <td>$0.023 per GB per month</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p><strong>Key insight:</strong> Vercel's pricing remains static at either $0 (Hobby) or $20 (Pro) until you exceed your plan's limits. You only pay more if you use more than your plan includes - providing cost predictability but potentially higher costs if you heavily overage.</p>
+
+    <hr class="my-4">
+
+    <h2>Render: Starter Plan with Usage Billing</h2>
+    <p>Render offers a free tier and a Starter plan ($7/mo) with included bandwidth. Additional usage beyond your plan's limits is billed at overage rates.</p>
+
+    <h3>Plans and Included Resources</h3>
+    <table class="comparison-table">
+        <thead>
+            <tr>
+                <th>Plan</th>
+                <th>Monthly Cost</th>
+                <th>Bandwidth Included</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Free</td>
+                <td>$0</td>
+                <td>None (overage charges apply)</td>
+            </tr>
+            <tr>
+                <td>Starter</td>
+                <td>$7</td>
+                <td>100 GB/mo</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Overage Rates</h3>
+    <table class="comparison-table">
+        <thead>
+            <tr>
+                <th>Feature</th>
+                <th>Overage Rate</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Bandwidth</td>
+                <td>$15 per 100 GB</td>
+            </tr>
+            <tr>
+                <td>Compute</td>
+                <td>$0.0695 per hour</td>
+            </tr>
+            <tr>
+                <td>Private Link Traffic</td>
+                <td>$5 per 100 GB</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p><strong>Key insight:</strong> Render's approach is similar to Vercel - fixed plans with overages. The Starter tier is more affordable than Vercel Pro ($7 vs $20) but has lower included bandwidth (100 GB vs 1,024 GB).</p>
+
+    <hr class="my-4">
+
+    <h2>Comparison Summary</h2>
+    <table class="comparison-table">
+        <thead>
+            <tr>
+                <th>Aspect</th>
+                <th>Netlify</th>
+                <th>Vercel</th>
+                <th>Render</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Billing Model</strong></td>
+                <td>Consumption-based credits</td>
+                <td>Fixed plans + overages</td>
+                <td>Fixed plans + overages</td>
+            </tr>
+            <tr>
+                <td><strong>Pricing Predictability</strong></td>
+                <td>Variable (tier based on usage)</td>
+                <td>Fixed until overages</td>
+                <td>Fixed until overages</td>
+            </tr>
+            <tr>
+                <td><strong>Best For</strong></td>
+                <td>Variable workloads, startups</td>
+                <td>Predictable usage, feature-rich apps</td>
+                <td>Budget-conscious, simple deployments</td>
+            </tr>
+            <tr>
+                <td><strong>Cost Floor</strong></td>
+                <td>$0</td>
+                <td>$0 (Hobby)</td>
+                <td>$0</td>
+            </tr>
+            <tr>
+                <td><strong>Cost Ceiling</strong></td>
+                <td>Unlimited (pay per credit pack)</td>
+                <td>Unlimited (overages apply)</td>
+                <td>Unlimited (overages apply)</td>
+            </tr>
+            <tr>
+                <td><strong>Tier Changes</strong></td>
+                <td>Automatic based on credits</td>
+                <td>Manual (you choose plan)</td>
+                <td>Manual (you choose plan)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Why This Matters for the Calculator</h2>
+    <p>The calculator shows dynamic tier transitions when using Netlify because your pricing tier is <strong>automatically determined</strong> by your credit consumption. As you increase usage, you accumulate more credits and move between Free → Personal → Pro → Extra tiers.</p>
+
+    <p>For Vercel and Render, your monthly cost stays fixed at the Hobby/Free or Pro/Starter tier you choose, with overages billed separately. That's why those providers feel "static" in cost comparisons - you don't automatically move to a higher plan; you stay on your chosen tier and pay extra for usage above your plan's limits.</p>
+
+    <h2>Next Steps</h2>
+    <p>Now that you understand the billing models, <a href="{{ url_for('index') }}">use the calculator</a> to estimate costs under different usage scenarios. Try the preset templates to see how different project types affect your monthly bill across all three providers.</p>
+</div>
+{% endblock %}
