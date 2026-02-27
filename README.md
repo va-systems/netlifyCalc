@@ -19,7 +19,35 @@ A clean, interactive web calculator for estimating monthly Netlify billing costs
 
 ## Getting Started
 
-### Run Locally
+### Run with Flask (Recommended for Development)
+
+The project now includes a Flask application with Jinja2 templating for better maintainability:
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run Flask development server
+python run.py
+
+# Then visit: http://localhost:5000
+```
+
+### Generate Static Files with Frozen-Flask
+
+To create deployment-ready static files:
+
+```bash
+# Generate build/ directory with static HTML/CSS/JS
+python freeze.py
+
+# Serve the frozen build locally
+cd build && python -m http.server 8000
+
+# Then visit: http://localhost:8000
+```
+
+### Run Locally with Basic HTTP Server (Original Method)
 
 ```bash
 # Using Python 3
@@ -31,15 +59,33 @@ npx http-server
 # Then visit: http://localhost:8000
 ```
 
-### File Structure
+### Project Structure
 
+**Flask Application:**
 ```
 netlify-calc/
-├── index.html          # HTML structure & semantic markup
-├── style.css           # Responsive styling & tooltip component
-├── script.js           # Calculator logic & state management
-├── config.json         # Pricing configuration (easily modifiable)
-└── README.md           # This file
+├── app.py                  # Flask application factory
+├── config.py               # Configuration settings (dev/prod)
+├── run.py                  # Development server launcher
+├── freeze.py               # Frozen-Flask static generator
+├── requirements.txt        # Python dependencies
+├── templates/
+│   ├── base.html          # Base Jinja2 template with meta/scripts
+│   └── index.html         # Calculator page (extends base.html)
+├── static/
+│   ├── css/style.css      # Responsive styling
+│   └── js/script.js       # Calculator logic & state management
+├── build/                 # Generated static files (Frozen-Flask output)
+└── README.md              # This file
+```
+
+**Static Files (for original method):**
+```
+netlify-calc/
+├── index.html             # HTML structure & semantic markup
+├── style.css              # Responsive styling & tooltip component
+├── script.js              # Calculator logic & state management
+└── README.md              # This file
 ```
 
 ## How It Works
