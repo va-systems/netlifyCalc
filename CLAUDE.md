@@ -38,18 +38,6 @@ cd build && python -m http.server 8000
 # Then visit: http://localhost:8000
 ```
 
-### Static Server Only (Original Method)
-
-```bash
-# Use Python's built-in server
-python -m http.server 8000
-
-# Or use Node.js
-npx http-server
-
-# Then visit: http://localhost:8000
-```
-
 ## Architecture
 
 ### Flask Application Structure
@@ -136,11 +124,6 @@ All in `static/js/script.js`:
 - `static/css/style.css` - Component styling (card, inputs, progress bar, responsive layout)
 - `static/js/script.js` - Core calculator logic, state management, input synchronization
 - `build/` - Frozen-Flask generated output (production-ready static HTML)
-
-**Static Files (Original):**
-- `index.html` - Original static HTML (kept for reference)
-- `script.js` - Original script (kept for reference)
-- `style.css` - Original styles (kept for reference)
 
 ## Development Notes
 

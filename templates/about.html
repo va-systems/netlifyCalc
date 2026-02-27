@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}About - Netlify Credit Calculator{% endblock %}
+{% block description %}Learn about the Netlify Credit Calculator project and why it was created.{% endblock %}
+{% block og_title %}About - Netlify Credit Calculator{% endblock %}
+{% block og_description %}Learn about the Netlify Credit Calculator project and why it was created.{% endblock %}
+
+{% block hero %}
+<div class="hero-section">
+    <div class="hero-content">
+        <h1>About</h1>
+        <p>Understanding Netlify's credit-based pricing model</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>What is this calculator?</h2>
+    <p>The Netlify Credit Calculator is an interactive tool designed to help developers and teams understand and estimate their monthly Netlify billing costs based on actual resource usage.</p>
+
+    <p>Netlify uses a credit-based pricing system where different metered features consume credits at different rates. This calculator translates your estimated usage into credits and provides an estimate of your monthly cost across Netlify's pricing tiers.</p>
+
+    <h2>Why build this?</h2>
+    <p>While Netlify provides clear pricing documentation, it can be challenging to estimate your actual monthly costs without manually calculating credits across multiple features. This calculator simplifies that process by:</p>
+    <ul>
+        <li>Providing real-time cost estimates as you adjust usage sliders</li>
+        <li>Showing credit consumption across all metered features</li>
+        <li>Visualizing which pricing tier you fall into</li>
+        <li>Allowing you to compare different usage scenarios with preset templates</li>
+        <li>Supporting URL-based sharing of calculator states</li>
+    </ul>
+
+    <h2>Features</h2>
+    <ul>
+        <li><strong>Multi-provider comparison:</strong> View costs across Netlify, Vercel, and Render</li>
+        <li><strong>Six metered features:</strong> AI Inference, Compute, Web Requests, Bandwidth, Form Submissions, and Production Deploys</li>
+        <li><strong>Preset scenarios:</strong> Quick templates for Personal Blog, Small SaaS, and Large SaaS</li>
+        <li><strong>Persistent state:</strong> Your calculations are saved in browser storage and shareable via URL</li>
+        <li><strong>Visual feedback:</strong> Color-coded progress bar showing your current tier (Free → Personal → Pro → Extra)</li>
+        <li><strong>Responsive design:</strong> Works seamlessly on desktop and mobile</li>
+    </ul>
+
+    <h2>Important disclaimer</h2>
+    <p>This calculator is <strong>not affiliated with Netlify</strong> and provides estimates based on publicly available pricing information. Actual costs may vary due to:</p>
+    <ul>
+        <li>Pricing updates or changes from Netlify</li>
+        <li>Rounding and calculation differences</li>
+        <li>Promotional credits or special offers</li>
+        <li>Account-specific billing rules</li>
+    </ul>
+    <p>Always verify billing estimates with <a href="https://www.netlify.com/pricing/" target="_blank" rel="noopener">Netlify's official pricing page</a> and your account dashboard.</p>
+
+    <h2>Get started</h2>
+    <p>Ready to estimate your costs? <a href="{{ url_for('index') }}">Go to the calculator</a> and start adjusting your usage metrics.</p>
+</div>
+{% endblock %}

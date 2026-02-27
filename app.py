@@ -27,14 +27,29 @@ def register_routes(app):
     def index():
         return render_template('index.html')
 
+    @app.route('/about')
+    def about():
+        return render_template('about.html')
+
+    @app.route('/contact')
+    def contact():
+        return render_template('contact.html')
+
+    @app.route('/attribution')
+    def attribution():
+        return render_template('attribution.html')
+
 
 def create_freezer(app):
     """Create and configure Freezer instance"""
     freezer = Freezer(app)
 
     @freezer.register_generator
-    def index_generator():
+    def page_generator():
         yield '/'
+        yield '/about'
+        yield '/contact'
+        yield '/attribution'
 
     return freezer
 

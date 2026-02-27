@@ -656,9 +656,9 @@ function handleProviderResultsSticky() {
     const cardRect = card.getBoundingClientRect();
     const isCurrentlyFixed = providerResults.classList.contains('is-fixed');
 
-    // Check if provider-results should be fixed (scrolled past the top)
-    // Account for card being within viewport
-    const shouldBeFixed = providerRect.top <= 0 && cardRect.top < 0;
+    // Check if provider-results should be fixed (scrolled within navbar height)
+    // Use 56px threshold (navbar height) to create hysteresis and prevent jitter
+    const shouldBeFixed = providerRect.top <= 56 && cardRect.top < 0;
 
     if (shouldBeFixed && !isCurrentlyFixed) {
         providerResults.classList.add('is-fixed');
