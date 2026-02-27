@@ -30,7 +30,12 @@ pip install -r requirements.txt
 # Run Flask development server
 python run.py
 
-# Then visit: http://localhost:3000
+# Then visit: http://localhost:8080
+```
+
+You can customize the port with the `FLASK_PORT` environment variable:
+```bash
+FLASK_PORT=3000 python run.py
 ```
 
 ### Generate Static Files with Frozen-Flask

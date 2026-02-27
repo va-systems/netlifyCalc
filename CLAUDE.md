@@ -16,10 +16,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # Install dependencies
 pip install -r requirements.txt
 
-# Run development server
+# Run development server (default port 8080)
 python run.py
 
-# Then visit: http://localhost:3000
+# Then visit: http://localhost:8080
+```
+
+Port can be customized with `FLASK_PORT` environment variable:
+```bash
+FLASK_PORT=3000 python run.py
 ```
 
 ### Generate Static Deployment
