@@ -700,7 +700,8 @@ bindPair(privLinkRange, privLinkNumber);
 
 // ----- initialization with URL and storage priority -----
 async function initialize() {
-    await loadConfig();
+    // Load config asynchronously in background (defaults already match config values)
+    loadConfig();
 
     let initialValues = loadFromURL() || loadFromStorage();
     if (initialValues) {
