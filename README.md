@@ -30,7 +30,7 @@ pip install -r requirements.txt
 # Run Flask development server
 python run.py
 
-# Then visit: http://localhost:5000
+# Then visit: http://localhost:3000
 ```
 
 ### Generate Static Files with Frozen-Flask

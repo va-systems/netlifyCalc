@@ -46,4 +46,6 @@ if __name__ == '__main__':
         freezer = create_freezer(app)
         freezer.freeze()
     else:
-        app.run(debug=app.config['DEBUG'], port=5000)
+        host = os.getenv('FLASK_HOST', '0.0.0.0')
+        port = int(os.getenv('FLASK_PORT', 3000))
+        app.run(debug=app.config['DEBUG'], host=host, port=port)
