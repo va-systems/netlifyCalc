@@ -161,3 +161,34 @@ Since there's no test framework, manual testing covers:
 - localStorage persists after page reload
 - Preset buttons load correct values
 - Input blur clamping keeps values within min/max bounds
+
+## Performance Optimization Strategy
+
+To maintain fast Core Web Vitals (LCP, FCP), follow this CSS/JS loading pattern:
+
+**Critical Resources (render-blocking):**
+- Inline essential CSS in `<head>` (~2KB) covering: layout, navigation, cards, inputs, results display
+- Use `font-display: swap` for web fonts to show system fonts immediately
+- Fonts: `Libre Baskerville` (display) + `Lato` (body)
+
+**Non-Critical Resources (deferred):**
+- Load Bootstrap CSS async: `media="print" onload="this.media='all'"`
+- Load deferred CSS (`style-deferred.css`) async: contains transitions, hover states, complex layouts
+- Load all JS with `defer` attribute: allows HTML parsing to continue
+
+**File Structure:**
+- `static/css/critical.css` - Inlined content (layout, typography, inputs, results, badges)
+- `static/css/style-deferred.css` - Async loaded (animations, hovers, carousel, coverage matrix)
+- Original `static/css/style.css` - No longer used; kept for reference only if needed
+
+**When Adding New Styles:**
+1. If adding above-fold visual (nav, buttons, inputs, results): add to `critical.css`
+2. If adding hover effects, animations, or below-fold styling: add to `style-deferred.css`
+3. Never add new large render-blocking CDN dependencies without deferring them
+4. Always use `font-display: swap` for web fonts
+
+**Impact:**
+- Eliminates Bootstrap CSS (~60KB) from critical path
+- Fonts load without blocking render using system fallback
+- Page becomes interactive faster (FCP/LCP improvements)
+- Non-critical decorative CSS loads after content is visible
