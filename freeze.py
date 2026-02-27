@@ -9,17 +9,12 @@ This will generate a 'build/' directory with all static HTML and assets.
 """
 
 import os
-from app import create_app
-from flask_frozen import Freezer
+from app import create_app, create_freezer
 
 
 def main():
     app = create_app('production')
-    freezer = Freezer(app)
-
-    @freezer.register_generator
-    def index_generator():
-        yield '/'
+    freezer = create_freezer(app)
 
     print("Freezing Flask app...")
     freezer.freeze()

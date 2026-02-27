@@ -6,6 +6,7 @@ class Config:
     TESTING = False
     FREEZER_RELATIVE_URLS = True
     FREEZER_DESTINATION = os.path.join(os.path.dirname(__file__), 'build')
+    FREEZER_IGNORE_MIMETYPE_WARNINGS = True
 
 
 class DevelopmentConfig(Config):

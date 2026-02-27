@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>About - Netlify Credit Calculator</title>
+    <meta name="description" content="Learn about the Netlify Credit Calculator project and why it was created.">
+    <meta name="keywords" content="hosting calculator, billing calculator, credits, pricing, AI inference, compute">
+    <meta name="author" content="Hosting Calculator">
+    <meta name="theme-color" content="#2e3f99">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="About - Netlify Credit Calculator">
+    <meta property="og:description" content="Learn about the Netlify Credit Calculator project and why it was created.">
+    <meta property="og:url" content="https://hosting-calc.app">
+    <meta property="og:image" content="https://hosting-calc.app/og-image.png">
+    <meta property="og:image:alt" content="Hosting Calculator">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Hosting Calculator">
+    <meta name="twitter:description" content="Estimate your monthly hosting costs based on resource usage.">
+    <meta name="twitter:image" content="https://hosting-calc.app/og-image.png">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Lato:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/style.css">
+    
+</head>
+<body>
+    <!-- Sticky Navigation Header -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <ul class="navbar-menu">
+                <li><a href="../index.html" class="nav-link ">Calculator</a></li>
+                <li><a href="index.html" class="nav-link active">About</a></li>
+                <li><a href="../contact/index.html" class="nav-link ">Contact</a></li>
+                <li><a href="../attribution/index.html" class="nav-link ">Attribution</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Optional Hero Section -->
+    
+<div class="hero-section">
+    <div class="hero-content">
+        <h1>About</h1>
+        <p>Understanding Netlify's credit-based pricing model</p>
+    </div>
+</div>
+
+
+    <!-- Main Content Container -->
+    <main class="main-container">
+        
+<div class="card">
+    <h2>What is this calculator?</h2>
+    <p>The Netlify Credit Calculator is an interactive tool designed to help developers and teams understand and estimate their monthly Netlify billing costs based on actual resource usage.</p>
+
+    <p>Netlify uses a credit-based pricing system where different metered features consume credits at different rates. This calculator translates your estimated usage into credits and provides an estimate of your monthly cost across Netlify's pricing tiers.</p>
+
+    <h2>Why build this?</h2>
+    <p>While Netlify provides clear pricing documentation, it can be challenging to estimate your actual monthly costs without manually calculating credits across multiple features. This calculator simplifies that process by:</p>
+    <ul>
+        <li>Providing real-time cost estimates as you adjust usage sliders</li>
+        <li>Showing credit consumption across all metered features</li>
+        <li>Visualizing which pricing tier you fall into</li>
+        <li>Allowing you to compare different usage scenarios with preset templates</li>
+        <li>Supporting URL-based sharing of calculator states</li>
+    </ul>
+
+    <h2>Features</h2>
+    <ul>
+        <li><strong>Multi-provider comparison:</strong> View costs across Netlify, Vercel, and Render</li>
+        <li><strong>Six metered features:</strong> AI Inference, Compute, Web Requests, Bandwidth, Form Submissions, and Production Deploys</li>
+        <li><strong>Preset scenarios:</strong> Quick templates for Personal Blog, Small SaaS, and Large SaaS</li>
+        <li><strong>Persistent state:</strong> Your calculations are saved in browser storage and shareable via URL</li>
+        <li><strong>Visual feedback:</strong> Color-coded progress bar showing your current tier (Free → Personal → Pro → Extra)</li>
+        <li><strong>Responsive design:</strong> Works seamlessly on desktop and mobile</li>
+    </ul>
+
+    <h2>Important disclaimer</h2>
+    <p>This calculator is <strong>not affiliated with Netlify</strong> and provides estimates based on publicly available pricing information. Actual costs may vary due to:</p>
+    <ul>
+        <li>Pricing updates or changes from Netlify</li>
+        <li>Rounding and calculation differences</li>
+        <li>Promotional credits or special offers</li>
+        <li>Account-specific billing rules</li>
+    </ul>
+    <p>Always verify billing estimates with <a href="https://www.netlify.com/pricing/" target="_blank" rel="noopener">Netlify's official pricing page</a> and your account dashboard.</p>
+
+    <h2>Get started</h2>
+    <p>Ready to estimate your costs? <a href="../index.html">Go to the calculator</a> and start adjusting your usage metrics.</p>
+</div>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../static/js/script.js"></script>
+    
+</body>
+</html>

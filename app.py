@@ -28,19 +28,19 @@ def register_routes(app):
     def index():
         return render_template('index.html')
 
-    @app.route('/about')
+    @app.route('/about/')
     def about():
         return render_template('about.html')
 
-    @app.route('/contact')
+    @app.route('/contact/')
     def contact():
         return render_template('contact.html')
 
-    @app.route('/attribution')
+    @app.route('/attribution/')
     def attribution():
         return render_template('attribution.html')
 
-    @app.route('/billing-models')
+    @app.route('/billing-models/')
     def billing_models():
         return render_template('billing-models.html')
 
@@ -59,10 +59,10 @@ def create_freezer(app):
     @freezer.register_generator
     def page_generator():
         yield '/'
-        yield '/about'
-        yield '/contact'
-        yield '/attribution'
-        yield '/billing-models'
+        yield '/about/'
+        yield '/contact/'
+        yield '/attribution/'
+        yield '/billing-models/'
 
     return freezer
 
@@ -74,6 +74,7 @@ if __name__ == '__main__':
         freezer = create_freezer(app)
         freezer.freeze()
     else:
-        host = os.getenv('FLASK_HOST', '0.0.0.0')
         port = int(os.getenv('FLASK_PORT', 8080))
-        app.run(debug=app.config['DEBUG'], host=host, port=port)
+        print("Starting Netlify Credit Calculator Flask app...")
+        print(f"Visit http://localhost:{port} in your browser")
+        app.run(debug=True, host='0.0.0.0', port=port)
